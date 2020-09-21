@@ -122,6 +122,7 @@ class __LoginFormState extends State<_LoginForm> {
                               context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
                           FocusManager.instance.primaryFocus.unfocus();
                           _formKey.currentState.reset();
+                          userProfileProvider.userProfile = null;
                         }
                       },
                     ),

@@ -9,8 +9,12 @@ class UserProfileServie {
 
   Future<UserProfile> findBy(BuildContext context, String username, String password) async {
     final response = await http.get('$baseUrl/$username');
-    final decodedData = json.decode(response.body);
 
-    return UserProfile.fromJson(decodedData);
+    if (response.statusCode == 200) {
+      final decodedData = json.decode(response.body);
+      return UserProfile.fromJson(decodedData);
+    } else {
+      return null;
+    }
   }
 }
