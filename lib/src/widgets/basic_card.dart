@@ -14,29 +14,13 @@ class BasicCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-
-    return _Card(
-      size: size,
-      footer: footer,
-      color: color,
-      title: title,
-      child: child,
-    );
+    return _Card(footer: footer, color: color, title: title, child: child);
   }
 }
 
 class _Card extends StatelessWidget {
-  const _Card({
-    Key key,
-    @required this.size,
-    @required this.footer,
-    @required this.color,
-    @required this.title,
-    @required this.child,
-  }) : super(key: key);
+  const _Card({@required this.footer, @required this.color, @required this.title, @required this.child});
 
-  final Size size;
   final Widget footer;
   final Color color;
   final String title;
@@ -45,6 +29,7 @@ class _Card extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
 
     return Container(
       margin: EdgeInsets.only(left: size.width * 0.03, right: size.width * 0.03, top: size.height * 0.02),
@@ -62,27 +47,21 @@ class _Card extends StatelessWidget {
           ),
         ],
       ),
-      child: _Content(title: title, size: size, child: child, footer: footer),
+      child: _Content(title: title, child: child, footer: footer),
     );
   }
 }
 
 class _Content extends StatelessWidget {
-  const _Content({
-    Key key,
-    @required this.title,
-    @required this.size,
-    @required this.child,
-    @required this.footer,
-  }) : super(key: key);
+  const _Content({@required this.title, @required this.child, @required this.footer});
 
   final String title;
-  final Size size;
   final Widget child;
   final Widget footer;
 
   @override
   Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
     return Column(
       children: [
         if (this.title != null)

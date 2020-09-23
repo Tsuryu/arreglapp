@@ -1,4 +1,3 @@
-import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
 import 'package:arreglapp/src/providers/user_profile_provider.dart';
 import 'package:arreglapp/src/theme/theme.dart';

@@ -11,6 +11,7 @@ class CommonTextFormField extends StatelessWidget {
   final bool noSpaces;
   final String hint;
   final bool password;
+  final String initialvalue;
 
   const CommonTextFormField({
     this.validateEmpty = false,
@@ -19,6 +20,7 @@ class CommonTextFormField extends StatelessWidget {
     this.noSpaces = false,
     this.hint,
     this.password = false,
+    this.initialvalue,
   });
 
   @override
@@ -29,6 +31,7 @@ class CommonTextFormField extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.only(bottom: size.height * 0.01),
       child: TextFormField(
+        initialValue: this.initialvalue,
         inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_]'), allow: true)] : [],
         decoration: InputDecoration(
           isDense: true,

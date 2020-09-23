@@ -1,12 +1,13 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/pages/enrollment_type_selection_page.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/providers/user_profile_provider.dart';
 import 'package:arreglapp/src/services/user_profile_service.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
+import 'package:arreglapp/src/widgets/common_header.dart';
 import 'package:arreglapp/src/widgets/common_text_form_field.dart';
-import 'package:arreglapp/src/widgets/plain_title_header.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class LoginPage extends StatelessWidget {
         width: double.infinity,
         height: double.infinity,
         child: SliderPageWrapper(
-          header: _Header(),
+          header: CommonHeader(),
           getChildren: () {
             return <Widget>[
               _BasicInfoForm(),
@@ -29,13 +30,6 @@ class LoginPage extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _Header extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return PlainTitleHeader(title: 'Arreglapp');
   }
 }
 
@@ -94,7 +88,21 @@ class __LoginFormState extends State<_LoginForm> {
             Flex(
               direction: Axis.horizontal,
               children: [
-                Flexible(child: Container(), flex: 3),
+                Flexible(
+                  flex: 2,
+                  child: Container(
+                    width: double.infinity,
+                    child: RaisedButton(
+                      elevation: 0.0,
+                      child: Text('Registrarse', style: appTheme.textTheme.bodyText1),
+                      onPressed: () async {
+                        Navigator.push(context,
+                            CupertinoPageRoute(builder: (BuildContext context) => EnrollmentTypeSelectionPage()));
+                      },
+                    ),
+                  ),
+                ),
+                Flexible(child: Container(), flex: 1),
                 Flexible(
                   flex: 2,
                   child: Container(
