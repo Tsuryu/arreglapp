@@ -40,8 +40,12 @@ class _TypeSelection extends StatelessWidget {
         children: [
           CommonButton(
             text: 'Cliente',
-            onPressed: () {
-              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ClientEnrollmentPage()));
+            onPressed: () async {
+              bool result = await Navigator.push(
+                  context, CupertinoPageRoute(builder: (BuildContext context) => ClientEnrollmentPage()));
+              if (result) {
+                Navigator.pop(context);
+              }
             },
           ),
           CommonButton(

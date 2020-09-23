@@ -7,8 +7,18 @@ class CommonButton extends StatelessWidget {
   final bool mainButton;
   final Function onPressed;
   static dynamic _dummyOnPressed() {}
+  final double width;
+  final double height;
+  final bool withBorder;
 
-  const CommonButton({@required this.text, this.mainButton = true, this.onPressed = _dummyOnPressed});
+  const CommonButton({
+    @required this.text,
+    this.mainButton = true,
+    this.onPressed = _dummyOnPressed,
+    this.width,
+    this.height,
+    this.withBorder = true,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -17,15 +27,20 @@ class CommonButton extends StatelessWidget {
     final buttonWidth = size.width * 0.5;
 
     return Container(
-      width: buttonWidth,
-      height: buttonWidth / 4,
+      width: this.width != null ? this.width : buttonWidth,
+      height: this.height != null ? this.height : buttonWidth / 4,
       child: FlatButton(
         onPressed: this.onPressed,
-        child: Text(this.text, style: this.mainButton ? appTheme.textTheme.bodyText2 : appTheme.accentColor),
-        color: this.mainButton ? appTheme.accentColor : appTheme.backgroundColor,
+        child: Text(this.text,
+            style: this.mainButton
+                ? appTheme.textTheme.bodyText2
+                : appTheme.textTheme.bodyText2.copyWith(color: appTheme.accentColor)),
+        color: this.mainButton ? appTheme.accentColor : appTheme.scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
-          side: BorderSide(color: this.mainButton ? Colors.white : appTheme.backgroundColor),
+          side: this.withBorder
+              ? BorderSide(color: this.mainButton ? Colors.white : appTheme.backgroundColor)
+              : BorderSide(width: 0.0, color: Colors.transparent),
         ),
       ),
     );

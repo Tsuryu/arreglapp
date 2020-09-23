@@ -4,8 +4,8 @@ import 'package:arreglapp/src/pages/enrollment_type_selection_page.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/providers/user_profile_provider.dart';
 import 'package:arreglapp/src/services/user_profile_service.dart';
-import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
+import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:arreglapp/src/widgets/common_header.dart';
 import 'package:arreglapp/src/widgets/common_text_form_field.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
@@ -58,9 +58,7 @@ class __LoginFormState extends State<_LoginForm> {
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<_LoginProvider>(context);
     final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
-
     final size = MediaQuery.of(context).size;
-    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
     return Container(
       padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
@@ -88,53 +86,45 @@ class __LoginFormState extends State<_LoginForm> {
             Flex(
               direction: Axis.horizontal,
               children: [
-                Flexible(
-                  flex: 2,
-                  child: Container(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      elevation: 0.0,
-                      child: Text('Registrarse', style: appTheme.textTheme.bodyText1),
-                      onPressed: () async {
-                        Navigator.push(context,
-                            CupertinoPageRoute(builder: (BuildContext context) => EnrollmentTypeSelectionPage()));
-                      },
-                    ),
-                  ),
+                CommonButton(
+                  text: 'Registrarse',
+                  withBorder: false,
+                  height: size.height * 0.075,
+                  width: size.width * 0.4,
+                  onPressed: () async {
+                    await Navigator.push(
+                        context, CupertinoPageRoute(builder: (BuildContext context) => EnrollmentTypeSelectionPage()));
+                    _formKey.currentState.reset();
+                  },
                 ),
-                Flexible(child: Container(), flex: 1),
-                Flexible(
-                  flex: 2,
-                  child: Container(
-                    width: double.infinity,
-                    child: RaisedButton(
-                      elevation: 0.0,
-                      child: Text('Ingresar', style: appTheme.textTheme.bodyText1),
-                      onPressed: () async {
-                        if (!_formKey.currentState.validate()) {
-                          FocusManager.instance.primaryFocus.unfocus();
-                          showErrorSnackbar(context, 'Datos incorrectos');
-                          return;
-                        }
-                        final UserProfile result = await UserProfileServie().findBy(
-                          context,
-                          loginProvider.username,
-                          loginProvider.password,
-                        );
+                Expanded(child: Container()),
+                CommonButton(
+                  text: 'Ingresar',
+                  mainButton: false,
+                  height: size.height * 0.075,
+                  width: size.width * 0.4,
+                  onPressed: () async {
+                    if (!_formKey.currentState.validate()) {
+                      FocusManager.instance.primaryFocus.unfocus();
+                      showErrorSnackbar(context, 'Datos incorrectos');
+                      return;
+                    }
+                    final UserProfile result = await UserProfileServie().findBy(
+                      context,
+                      loginProvider.username,
+                      loginProvider.password,
+                    );
 
-                        if (result == null) {
-                          showErrorSnackbar(context, 'Datos incorrectos');
-                        } else {
-                          userProfileProvider.userProfile = result;
-                          await Navigator.push(
-                              context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
-                          FocusManager.instance.primaryFocus.unfocus();
-                          _formKey.currentState.reset();
-                          userProfileProvider.userProfile = null;
-                        }
-                      },
-                    ),
-                  ),
+                    if (result == null) {
+                      showErrorSnackbar(context, 'Datos incorrectos');
+                    } else {
+                      userProfileProvider.userProfile = result;
+                      await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
+                      FocusManager.instance.primaryFocus.unfocus();
+                      _formKey.currentState.reset();
+                      userProfileProvider.userProfile = null;
+                    }
+                  },
                 ),
               ],
             ),

@@ -1,3 +1,6 @@
+import 'package:arreglapp/src/helpers/util.dart';
+import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/services/user_profile_service.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
 import 'package:arreglapp/src/widgets/common_header.dart';
@@ -39,9 +42,18 @@ class __PagesState extends State<_Pages> {
   final PageController _pageController = PageController(initialPage: 0);
   int _currentPage = 0;
 
-  final _formKeyPersonalData = GlobalKey<FormState>();
-  final _formKeyCredentials = GlobalKey<FormState>();
-  final _formKeyTermsAndConditions = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyPersonalData = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyCredentials = GlobalKey<FormState>();
+  final GlobalKey<FormState> _formKeyTermsAndConditions = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context, listen: false);
+    clientEnrollmentProvider.personalDataFormKey = this._formKeyPersonalData;
+    clientEnrollmentProvider.credentialsFormKey = this._formKeyCredentials;
+    clientEnrollmentProvider.pageController = this._pageController;
+  }
 
   List<Widget> _buildPageIndicator() {
     List<Widget> list = [];
@@ -122,16 +134,32 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lastPage = this.pages == this.currentPage + 1;
+    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context, listen: false);
 
     return Container(
       child: Align(
         alignment: FractionalOffset.bottomRight,
         child: FlatButton(
-          onPressed: () {
-            if (lastPage) {
+          onPressed: () async {
+            if (!lastPage) {
+              this.pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.ease);
               return;
             }
-            this.pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.ease);
+
+            if (!clientEnrollmentProvider.isValidForm()) {
+              showErrorSnackbar(context, "Datos invalidos");
+              return;
+            }
+
+            var userProfile = clientEnrollmentProvider.getUserProfile();
+            var result = await UserProfileServie().create(context, userProfile);
+
+            if (result) {
+              showSuccessSnackbar(context, "Usuario creado");
+              Navigator.pop(context, true);
+            } else {
+              showErrorSnackbar(context, 'Error creando el usuario, por favor intente mas tarde');
+            }
           },
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -212,7 +240,10 @@ class _ClientInfoForm extends StatefulWidget {
   __ClientInfoFormState createState() => __ClientInfoFormState();
 }
 
-class __ClientInfoFormState extends State<_ClientInfoForm> {
+class __ClientInfoFormState extends State<_ClientInfoForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -261,7 +292,10 @@ class _ClientCredentialsForm extends StatefulWidget {
   __ClientCredentialsFormState createState() => __ClientCredentialsFormState();
 }
 
-class __ClientCredentialsFormState extends State<_ClientCredentialsForm> {
+class __ClientCredentialsFormState extends State<_ClientCredentialsForm> with AutomaticKeepAliveClientMixin {
+  @override
+  bool get wantKeepAlive => true;
+
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -303,6 +337,9 @@ class __ClientCredentialsFormState extends State<_ClientCredentialsForm> {
 }
 
 class _ClientEnrollmentProvider with ChangeNotifier {
+  PageController _pageController;
+  GlobalKey<FormState> _personalDataFormKey;
+  GlobalKey<FormState> _credentialsFormKey;
   String _username;
   String _password;
   String _firstName;
@@ -336,7 +373,44 @@ class _ClientEnrollmentProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  signUp() {
+  set personalDataFormKey(GlobalKey<FormState> value) {
+    this._personalDataFormKey = value;
+  }
+
+  set credentialsFormKey(GlobalKey<FormState> value) {
+    this._credentialsFormKey = value;
+  }
+
+  set pageController(PageController value) {
+    this._pageController = value;
+  }
+
+  bool isValidForm() {
+    if (!this._personalDataFormKey.currentState.validate()) {
+      this._pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.ease);
+      return false;
+    }
+
+    if (!this._credentialsFormKey.currentState.validate()) {
+      this._pageController.animateToPage(1, duration: Duration(milliseconds: 500), curve: Curves.ease);
+      return false;
+    }
+
+    if (!this.termsAndConditions) {
+      return false;
+    }
+
     return true;
+  }
+
+  UserProfile getUserProfile() {
+    UserProfile userProfile = UserProfile();
+
+    userProfile.firstName = this._firstName;
+    userProfile.lastName = this._lastName;
+    userProfile.username = this._username;
+    userProfile.password = this._password;
+
+    return userProfile;
   }
 }
