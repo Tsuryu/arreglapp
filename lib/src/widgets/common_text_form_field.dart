@@ -32,7 +32,7 @@ class CommonTextFormField extends StatelessWidget {
       padding: EdgeInsets.only(bottom: size.height * 0.01),
       child: TextFormField(
         initialValue: this.initialvalue,
-        inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_]'), allow: true)] : [],
+        inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_@.]'), allow: true)] : [],
         decoration: InputDecoration(
           isDense: true,
           labelText: this.label,

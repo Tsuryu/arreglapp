@@ -9,7 +9,7 @@ void main() {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeChanger(2)),
-      ChangeNotifierProvider(create: (_) => UserProfileProvider()),
+      ChangeNotifierProvider(create: (_) => SessionProvider()),
     ],
     child: MyApp(),
   ));

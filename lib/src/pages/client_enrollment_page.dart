@@ -275,6 +275,15 @@ class __ClientInfoFormState extends State<_ClientInfoForm> with AutomaticKeepAli
                   clientEnrollmentProvider.lastName = value;
                 },
               ),
+              CommonTextFormField(
+                initialvalue: clientEnrollmentProvider.email,
+                label: 'Email',
+                validateEmpty: true,
+                noSpaces: true,
+                onChange: (String value) {
+                  clientEnrollmentProvider.email = value;
+                },
+              ),
             ],
           ),
         ),
@@ -344,6 +353,7 @@ class _ClientEnrollmentProvider with ChangeNotifier {
   String _password;
   String _firstName;
   String _lastName;
+  String _email;
   bool _termsAndConditions = false;
 
   get username => this._username;
@@ -351,6 +361,7 @@ class _ClientEnrollmentProvider with ChangeNotifier {
   get firstName => this._firstName;
   get lastName => this._lastName;
   get termsAndConditions => this._termsAndConditions;
+  get email => this._email;
 
   set username(String value) {
     this._username = value;
@@ -385,6 +396,10 @@ class _ClientEnrollmentProvider with ChangeNotifier {
     this._pageController = value;
   }
 
+  set email(String value) {
+    this._email = value;
+  }
+
   bool isValidForm() {
     if (!this._personalDataFormKey.currentState.validate()) {
       this._pageController.animateToPage(0, duration: Duration(milliseconds: 500), curve: Curves.ease);
@@ -410,6 +425,7 @@ class _ClientEnrollmentProvider with ChangeNotifier {
     userProfile.lastName = this._lastName;
     userProfile.username = this._username;
     userProfile.password = this._password;
+    userProfile.email = this._email;
 
     return userProfile;
   }

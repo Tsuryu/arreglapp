@@ -1,9 +1,9 @@
 import 'package:arreglapp/src/helpers/util.dart';
-import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/pages/enrollment_type_selection_page.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/providers/user_profile_provider.dart';
-import 'package:arreglapp/src/services/user_profile_service.dart';
+import 'package:arreglapp/src/services/session_service.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:arreglapp/src/widgets/common_header.dart';
@@ -57,7 +57,7 @@ class __LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<_LoginProvider>(context);
-    final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -109,7 +109,7 @@ class __LoginFormState extends State<_LoginForm> {
                       showErrorSnackbar(context, 'Datos incorrectos');
                       return;
                     }
-                    final UserProfile result = await UserProfileServie().findBy(
+                    final Session result = await SessionService().login(
                       context,
                       loginProvider.username,
                       loginProvider.password,
@@ -118,11 +118,11 @@ class __LoginFormState extends State<_LoginForm> {
                     if (result == null) {
                       showErrorSnackbar(context, 'Datos incorrectos');
                     } else {
-                      userProfileProvider.userProfile = result;
+                      sessionProvider.session = result;
                       await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
                       FocusManager.instance.primaryFocus.unfocus();
                       _formKey.currentState.reset();
-                      userProfileProvider.userProfile = null;
+                      sessionProvider.session = null;
                     }
                   },
                 ),

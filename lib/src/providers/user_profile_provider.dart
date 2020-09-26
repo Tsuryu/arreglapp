@@ -1,13 +1,13 @@
-import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/models/session.dart';
 import 'package:flutter/material.dart';
 
-class UserProfileProvider with ChangeNotifier {
-  UserProfile _userProfile;
+class SessionProvider with ChangeNotifier {
+  Session _session;
 
-  UserProfile get userProfile => this._userProfile;
+  Session get session => this._session;
 
-  set userProfile(UserProfile value) {
-    this._userProfile = value;
+  set session(Session value) {
+    this._session = value;
     notifyListeners();
   }
 }

@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
     return Scaffold(
       body: Container(
@@ -17,7 +17,12 @@ class HomePage extends StatelessWidget {
           header: _Header(),
           getChildren: () {
             return <Widget>[
-              Center(child: Text("Hola ${userProfileProvider.userProfile.firstName}")),
+              Column(
+                children: [
+                  Text("Hola ${sessionProvider.session.userProfile.username}"),
+                  Text("JWT ${sessionProvider.session.jwt}"),
+                ],
+              ),
             ];
           },
         ),

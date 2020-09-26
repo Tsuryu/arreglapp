@@ -14,18 +14,21 @@ class UserProfile {
     this.password,
     this.firstName,
     this.lastName,
+    this.email,
   });
 
   String username;
   String password;
   String firstName;
   String lastName;
+  String email;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
         username: json["username"],
         password: json["password"],
         firstName: json["first_name"],
         lastName: json["last_name"],
+        email: json["email"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -33,5 +36,6 @@ class UserProfile {
         "password": password,
         "first_name": firstName,
         "last_name": lastName,
+        "email": email,
       };
 }
