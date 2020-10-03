@@ -1,32 +1,36 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/session.dart';
-import 'package:arreglapp/src/pages/enrollment_type_selection_page.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
-import 'package:arreglapp/src/providers/user_profile_provider.dart';
+import 'package:arreglapp/src/pages/user_enrollment_page.dart';
+import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/session_service.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
-import 'package:arreglapp/src/widgets/common_header.dart';
 import 'package:arreglapp/src/widgets/common_text_form_field.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
+
+import 'external_background.dart';
 
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: SliderPageWrapper(
-          header: CommonHeader(),
-          getChildren: () {
-            return <Widget>[
-              _BasicInfoForm(),
-            ];
-          },
+      body: ExternalBackground(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: SliderPageWrapper(
+            header: Container(),
+            getChildren: () {
+              return <Widget>[
+                _BasicInfoForm(),
+              ];
+            },
+          ),
         ),
       ),
     );
@@ -36,11 +40,19 @@ class LoginPage extends StatelessWidget {
 class _BasicInfoForm extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BasicCard(
-      title: "Login",
-      child: ChangeNotifierProvider(
-        create: (_) => _LoginProvider(),
-        child: _LoginForm(),
+    final size = MediaQuery.of(context).size;
+    return Padding(
+      padding: EdgeInsets.only(
+        right: size.width * 0.02,
+        left: size.width * 0.02,
+        // top: size.height * 0.05,
+      ),
+      child: BasicCard(
+        title: "Login",
+        child: ChangeNotifierProvider(
+          create: (_) => _LoginProvider(),
+          child: _LoginForm(),
+        ),
       ),
     );
   }
@@ -70,6 +82,7 @@ class __LoginFormState extends State<_LoginForm> {
               label: 'Username',
               validateEmpty: true,
               noSpaces: true,
+              icon: FontAwesomeIcons.user,
               onChange: (String value) {
                 loginProvider.username = value;
               },
@@ -79,6 +92,7 @@ class __LoginFormState extends State<_LoginForm> {
               label: 'Password',
               validateEmpty: true,
               noSpaces: true,
+              icon: FontAwesomeIcons.key,
               onChange: (String value) {
                 loginProvider.password = value;
               },
@@ -93,7 +107,7 @@ class __LoginFormState extends State<_LoginForm> {
                   width: size.width * 0.4,
                   onPressed: () async {
                     await Navigator.push(
-                        context, CupertinoPageRoute(builder: (BuildContext context) => EnrollmentTypeSelectionPage()));
+                        context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
                     _formKey.currentState.reset();
                   },
                 ),
@@ -109,14 +123,10 @@ class __LoginFormState extends State<_LoginForm> {
                       showErrorSnackbar(context, 'Datos incorrectos');
                       return;
                     }
-                    final Session result = await SessionService().login(
-                      context,
-                      loginProvider.username,
-                      loginProvider.password,
-                    );
+                    final Session result = await SessionService().login(loginProvider.username, loginProvider.password);
 
                     if (result == null) {
-                      showErrorSnackbar(context, 'Datos incorrectos');
+                      showErrorSnackbar(context, 'Credenciales invalidas');
                     } else {
                       sessionProvider.session = result;
                       await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));

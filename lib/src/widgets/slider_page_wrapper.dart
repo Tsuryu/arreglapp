@@ -7,7 +7,7 @@ class SliderPageWrapper extends StatelessWidget {
   final Widget header;
   final Function getChildren;
 
-  const SliderPageWrapper({this.future, @required this.header, this.getChildren});
+  const SliderPageWrapper({this.future, this.header, this.getChildren});
 
   @override
   Widget build(BuildContext context) {
@@ -32,8 +32,8 @@ class _SliderPageWrapperBuilder extends StatelessWidget {
         SliverPersistentHeader(
           floating: true,
           delegate: _SliverAppBarDelegate(
-            minHeight: size.height * 0.15,
-            maxHeight: size.height * 0.15,
+            minHeight: this.header != null ? size.height * 0.15 : 0,
+            maxHeight: this.header != null ? size.height * 0.15 : 0,
             child: Container(padding: EdgeInsets.only(bottom: size.height * 0.01), child: this.header),
           ),
         ),
@@ -66,8 +66,8 @@ class _SliderPageWrapperFutureBuilder extends StatelessWidget {
             SliverPersistentHeader(
               floating: true,
               delegate: _SliverAppBarDelegate(
-                minHeight: size.height * 0.2,
-                maxHeight: size.height * 0.2,
+                minHeight: this.header != null ? size.height * 0.15 : 0,
+                maxHeight: this.header != null ? size.height * 0.15 : 0,
                 child: Container(padding: EdgeInsets.only(bottom: size.height * 0.01), child: this.header),
               ),
             ),

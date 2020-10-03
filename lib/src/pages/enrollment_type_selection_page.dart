@@ -1,4 +1,4 @@
-import 'package:arreglapp/src/pages/client_enrollment_page.dart';
+import 'package:arreglapp/src/pages/user_enrollment_page.dart';
 import 'package:arreglapp/src/pages/provider_enrollment_page.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:arreglapp/src/widgets/common_header.dart';
@@ -42,7 +42,7 @@ class _TypeSelection extends StatelessWidget {
             text: 'Cliente',
             onPressed: () async {
               bool result = await Navigator.push(
-                  context, CupertinoPageRoute(builder: (BuildContext context) => ClientEnrollmentPage()));
+                  context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
               if (result) {
                 Navigator.pop(context);
               }

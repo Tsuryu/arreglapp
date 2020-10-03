@@ -2,10 +2,12 @@ import 'package:arreglapp/src/widgets/plain_title_header.dart';
 import 'package:flutter/material.dart';
 
 class CommonHeader extends StatelessWidget {
-  const CommonHeader({Key key}) : super(key: key);
+  final String title;
+
+  const CommonHeader({this.title = 'Arreglap'});
 
   @override
   Widget build(BuildContext context) {
-    return PlainTitleHeader(title: 'Arreglapp');
+    return PlainTitleHeader(title: this.title);
   }
 }

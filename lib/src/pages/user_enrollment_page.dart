@@ -1,31 +1,37 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/pages/verification_code_page.dart';
+import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/user_profile_service.dart';
-import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
-import 'package:arreglapp/src/widgets/common_header.dart';
 import 'package:arreglapp/src/widgets/common_text_form_field.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
-class ClientEnrollmentPage extends StatelessWidget {
+import 'external_background.dart';
+
+class UserEnrollmentPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        child: SliderPageWrapper(
-          header: CommonHeader(),
-          getChildren: () {
-            return <Widget>[
-              ChangeNotifierProvider(
-                create: (_) => _ClientEnrollmentProvider(),
-                child: _Pages(),
-              ),
-            ];
-          },
+      resizeToAvoidBottomInset: false,
+      body: ExternalBackground(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: SliderPageWrapper(
+            getChildren: () {
+              return <Widget>[
+                ChangeNotifierProvider(
+                  create: (_) => _UserEnrollmentProvider(),
+                  child: SafeArea(child: _Pages()),
+                ),
+              ];
+            },
+          ),
         ),
       ),
     );
@@ -49,10 +55,10 @@ class __PagesState extends State<_Pages> {
   @override
   void initState() {
     super.initState();
-    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context, listen: false);
-    clientEnrollmentProvider.personalDataFormKey = this._formKeyPersonalData;
-    clientEnrollmentProvider.credentialsFormKey = this._formKeyCredentials;
-    clientEnrollmentProvider.pageController = this._pageController;
+    final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context, listen: false);
+    userEnrollmentProvider.personalDataFormKey = this._formKeyPersonalData;
+    userEnrollmentProvider.credentialsFormKey = this._formKeyCredentials;
+    userEnrollmentProvider.pageController = this._pageController;
   }
 
   List<Widget> _buildPageIndicator() {
@@ -65,7 +71,6 @@ class __PagesState extends State<_Pages> {
 
   Widget _indicator(bool isActive) {
     final size = MediaQuery.of(context).size;
-    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final itemWidth = size.width * 0.1;
 
     return AnimatedContainer(
@@ -74,7 +79,7 @@ class __PagesState extends State<_Pages> {
       height: itemWidth * 0.3,
       width: isActive ? itemWidth * 1.5 : itemWidth,
       decoration: BoxDecoration(
-        color: isActive ? Colors.white : appTheme.primaryColor,
+        color: isActive ? Colors.white : Colors.grey,
         borderRadius: BorderRadius.all(Radius.circular(12)),
       ),
     );
@@ -88,7 +93,7 @@ class __PagesState extends State<_Pages> {
       children: [
         Container(
           margin: EdgeInsets.only(top: size.height * 0.02),
-          height: size.height * 0.7,
+          height: size.height * 0.85,
           child: PageView(
             physics: BouncingScrollPhysics(),
             controller: _pageController,
@@ -100,20 +105,19 @@ class __PagesState extends State<_Pages> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.02),
-                child: _ClientInfoForm(formKey: _formKeyPersonalData),
+                child: _UserInfoForm(formKey: _formKeyPersonalData),
+              ),
+              Padding(
+                padding: EdgeInsets.only(bottom: size.height * 0.40),
+                child: _UserCredentialsForm(formKey: _formKeyCredentials),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.25),
-                child: _ClientCredentialsForm(formKey: _formKeyCredentials),
-              ),
-              Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.15),
                 child: _TermsAndConditionsForm(formKey: _formKeyTermsAndConditions),
               ),
             ],
           ),
         ),
-        SizedBox(height: size.height * 0.03),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: _buildPageIndicator(),
@@ -134,7 +138,8 @@ class _NextButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final lastPage = this.pages == this.currentPage + 1;
-    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context, listen: false);
+    final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context, listen: false);
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
     return Container(
       child: Align(
@@ -146,17 +151,17 @@ class _NextButton extends StatelessWidget {
               return;
             }
 
-            if (!clientEnrollmentProvider.isValidForm()) {
+            if (!userEnrollmentProvider.isValidForm()) {
               showErrorSnackbar(context, "Datos invalidos");
               return;
             }
 
-            var userProfile = clientEnrollmentProvider.getUserProfile();
-            var result = await UserProfileServie().create(context, userProfile);
+            var userProfile = userEnrollmentProvider.getUserProfile();
+            var result = await UserProfileService().create(userProfile);
 
             if (result) {
-              showSuccessSnackbar(context, "Usuario creado");
-              Navigator.pop(context, true);
+              sessionProvider.userProfile = userProfile;
+              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => VerificationCodePage()));
             } else {
               showErrorSnackbar(context, 'Error creando el usuario, por favor intente mas tarde');
             }
@@ -193,7 +198,7 @@ class __TermsAndConditionsFormState extends State<_TermsAndConditionsForm> {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context);
+    final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context);
 
     return BasicCard(
       title: "Terminos y condiciones",
@@ -210,14 +215,15 @@ class __TermsAndConditionsFormState extends State<_TermsAndConditionsForm> {
                   ' procesamiento de datos que Arreglaapp y sus prestadores de servicios haga de mis datos personales, ' +
                   ' con la finalidad de evaluar mi elegibilidad para usar, o continuar usando, la plataforma Arreglapp.'),
               SizedBox(height: size.height * 0.02),
+              // Expanded(child: Container()),
               Text('Acepto terminos y condiciones', style: TextStyle(fontWeight: FontWeight.w800)),
               Row(
                 children: [
                   Text('NO'),
                   Switch(
-                    value: clientEnrollmentProvider.termsAndConditions,
+                    value: userEnrollmentProvider.termsAndConditions,
                     onChanged: (value) {
-                      clientEnrollmentProvider.termsAndConditions = value;
+                      userEnrollmentProvider.termsAndConditions = value;
                     },
                   ),
                   Text('SI'),
@@ -231,84 +237,128 @@ class __TermsAndConditionsFormState extends State<_TermsAndConditionsForm> {
   }
 }
 
-class _ClientInfoForm extends StatefulWidget {
+class _UserInfoForm extends StatefulWidget {
   final GlobalKey<FormState> formKey;
 
-  const _ClientInfoForm({this.formKey});
+  const _UserInfoForm({this.formKey});
 
   @override
-  __ClientInfoFormState createState() => __ClientInfoFormState();
+  __UserInfoFormState createState() => __UserInfoFormState();
 }
 
-class __ClientInfoFormState extends State<_ClientInfoForm> with AutomaticKeepAliveClientMixin {
+class __UserInfoFormState extends State<_UserInfoForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context);
 
     return BasicCard(
       title: "Datos personales",
-      child: Container(
-        padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-        child: Form(
-          key: this.widget.formKey,
-          child: Column(
-            children: [
-              CommonTextFormField(
-                initialvalue: clientEnrollmentProvider.firstName,
-                label: 'Nombre/s',
-                validateEmpty: true,
-                noSpaces: true,
-                onChange: (String value) {
-                  clientEnrollmentProvider.firstName = value;
-                },
-              ),
-              CommonTextFormField(
-                initialvalue: clientEnrollmentProvider.lastName,
-                label: 'Apellido/s',
-                validateEmpty: true,
-                noSpaces: true,
-                onChange: (String value) {
-                  clientEnrollmentProvider.lastName = value;
-                },
-              ),
-              CommonTextFormField(
-                initialvalue: clientEnrollmentProvider.email,
-                label: 'Email',
-                validateEmpty: true,
-                noSpaces: true,
-                onChange: (String value) {
-                  clientEnrollmentProvider.email = value;
-                },
-              ),
-            ],
-          ),
-        ),
+      child: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints viewportConstraints) {
+          return Form(
+            key: this.widget.formKey,
+            child: Padding(
+              padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
+              child: _GeneralDataFields(),
+            ),
+          );
+        },
       ),
     );
   }
 }
 
-class _ClientCredentialsForm extends StatefulWidget {
-  final GlobalKey<FormState> formKey;
-
-  const _ClientCredentialsForm({this.formKey});
-
+class _GeneralDataFields extends StatelessWidget {
   @override
-  __ClientCredentialsFormState createState() => __ClientCredentialsFormState();
+  Widget build(BuildContext context) {
+    final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context);
+    return Column(
+      children: [
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.firstName,
+          label: 'Nombre/s',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.addressCard,
+          onChange: (String value) {
+            userEnrollmentProvider.firstName = value;
+          },
+        ),
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.lastName,
+          label: 'Apellido/s',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.solidAddressCard,
+          onChange: (String value) {
+            userEnrollmentProvider.lastName = value;
+          },
+        ),
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.email,
+          label: 'Email',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.envelope,
+          onChange: (String value) {
+            userEnrollmentProvider.email = value;
+          },
+        ),
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.phone,
+          label: 'Telefono',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.phone,
+          onChange: (String value) {
+            userEnrollmentProvider.phone = value;
+          },
+        ),
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.city,
+          label: 'Ciudad',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.city,
+          onChange: (String value) {
+            userEnrollmentProvider.city = value;
+          },
+        ),
+        CommonTextFormField(
+          initialvalue: userEnrollmentProvider.address,
+          label: 'Direccion',
+          validateEmpty: true,
+          noSpaces: true,
+          icon: FontAwesomeIcons.mapMarkerAlt,
+          onChange: (String value) {
+            userEnrollmentProvider.address = value;
+          },
+        ),
+      ],
+    );
+  }
 }
 
-class __ClientCredentialsFormState extends State<_ClientCredentialsForm> with AutomaticKeepAliveClientMixin {
+class _UserCredentialsForm extends StatefulWidget {
+  final GlobalKey<FormState> formKey;
+
+  const _UserCredentialsForm({this.formKey});
+
+  @override
+  __UserCredentialsFormState createState() => __UserCredentialsFormState();
+}
+
+class __UserCredentialsFormState extends State<_UserCredentialsForm> with AutomaticKeepAliveClientMixin {
   @override
   bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    final clientEnrollmentProvider = Provider.of<_ClientEnrollmentProvider>(context);
+    final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context);
 
     return BasicCard(
       title: "Credenciales",
@@ -319,22 +369,24 @@ class __ClientCredentialsFormState extends State<_ClientCredentialsForm> with Au
           child: Column(
             children: [
               CommonTextFormField(
-                initialvalue: clientEnrollmentProvider.username,
+                initialvalue: userEnrollmentProvider.username,
                 label: 'Usuario',
                 validateEmpty: true,
                 noSpaces: true,
+                icon: FontAwesomeIcons.user,
                 onChange: (String value) {
-                  clientEnrollmentProvider.username = value;
+                  userEnrollmentProvider.username = value;
                 },
               ),
               CommonTextFormField(
-                initialvalue: clientEnrollmentProvider.password,
+                initialvalue: userEnrollmentProvider.password,
                 password: true,
                 label: 'Contraseña',
                 validateEmpty: true,
                 noSpaces: true,
+                icon: FontAwesomeIcons.key,
                 onChange: (String value) {
-                  clientEnrollmentProvider.password = value;
+                  userEnrollmentProvider.password = value;
                 },
               ),
             ],
@@ -345,7 +397,7 @@ class __ClientCredentialsFormState extends State<_ClientCredentialsForm> with Au
   }
 }
 
-class _ClientEnrollmentProvider with ChangeNotifier {
+class _UserEnrollmentProvider with ChangeNotifier {
   PageController _pageController;
   GlobalKey<FormState> _personalDataFormKey;
   GlobalKey<FormState> _credentialsFormKey;
@@ -354,12 +406,18 @@ class _ClientEnrollmentProvider with ChangeNotifier {
   String _firstName;
   String _lastName;
   String _email;
+  String _phone;
+  String _city;
+  String _address;
   bool _termsAndConditions = false;
 
   get username => this._username;
   get password => this._password;
   get firstName => this._firstName;
   get lastName => this._lastName;
+  get phone => this._phone;
+  get city => this._city;
+  get address => this._address;
   get termsAndConditions => this._termsAndConditions;
   get email => this._email;
 
@@ -377,6 +435,18 @@ class _ClientEnrollmentProvider with ChangeNotifier {
 
   set lastName(String value) {
     this._lastName = value;
+  }
+
+  set phone(String value) {
+    this._phone = value;
+  }
+
+  set city(String value) {
+    this._city = value;
+  }
+
+  set address(String value) {
+    this._address = value;
   }
 
   set termsAndConditions(bool value) {
@@ -426,6 +496,9 @@ class _ClientEnrollmentProvider with ChangeNotifier {
     userProfile.username = this._username;
     userProfile.password = this._password;
     userProfile.email = this._email;
+    userProfile.phone = this._phone;
+    userProfile.city = this._city;
+    userProfile.address = this._address;
 
     return userProfile;
   }

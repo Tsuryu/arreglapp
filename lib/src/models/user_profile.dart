@@ -15,6 +15,9 @@ class UserProfile {
     this.firstName,
     this.lastName,
     this.email,
+    this.phone,
+    this.city,
+    this.address,
   });
 
   String username;
@@ -22,6 +25,9 @@ class UserProfile {
   String firstName;
   String lastName;
   String email;
+  String phone;
+  String city;
+  String address;
 
   factory UserProfile.fromJson(Map<String, dynamic> json) => UserProfile(
         username: json["username"],
@@ -29,6 +35,9 @@ class UserProfile {
         firstName: json["first_name"],
         lastName: json["last_name"],
         email: json["email"],
+        phone: json["phone"],
+        city: json["city"],
+        address: json["address"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -37,5 +46,8 @@ class UserProfile {
         "first_name": firstName,
         "last_name": lastName,
         "email": email,
+        "phone": phone,
+        "city": city,
+        "address": address,
       };
 }

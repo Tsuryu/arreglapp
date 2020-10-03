@@ -1,5 +1,5 @@
 import 'package:arreglapp/src/pages/login_page.dart';
-import 'package:arreglapp/src/providers/user_profile_provider.dart';
+import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:arreglapp/src/helpers/util.dart';

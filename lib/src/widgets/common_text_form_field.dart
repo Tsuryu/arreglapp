@@ -12,6 +12,7 @@ class CommonTextFormField extends StatelessWidget {
   final String hint;
   final bool password;
   final String initialvalue;
+  final IconData icon;
 
   const CommonTextFormField({
     this.validateEmpty = false,
@@ -21,6 +22,7 @@ class CommonTextFormField extends StatelessWidget {
     this.hint,
     this.password = false,
     this.initialvalue,
+    this.icon,
   });
 
   @override
@@ -52,6 +54,13 @@ class CommonTextFormField extends StatelessWidget {
               width: 0.5,
             ),
           ),
+          prefixIcon: this.icon == null
+              ? null
+              : Icon(
+                  this.icon,
+                  size: size.height * 0.04,
+                  color: appTheme.primaryColor,
+                ),
         ),
         validator: this.validateEmpty ? Util.formValidateEmpty : null,
         onChanged: this.onChange != null ? this.onChange : () {},

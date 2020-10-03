@@ -47,7 +47,60 @@ class _Card extends StatelessWidget {
           ),
         ],
       ),
-      child: _Content(title: title, child: child, footer: footer),
+      // child: _Content(title: title, child: child, footer: footer),
+      child: _ContentBuilder(title: title, child: child, footer: footer),
+    );
+  }
+}
+
+class _ContentBuilder extends StatelessWidget {
+  const _ContentBuilder({@required this.title, @required this.child, @required this.footer});
+
+  final String title;
+  final Widget child;
+  final Widget footer;
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return LayoutBuilder(
+      builder: (BuildContext context, BoxConstraints viewportConstraints) {
+        return SingleChildScrollView(
+          child: ConstrainedBox(
+            constraints: BoxConstraints(
+                // minHeight: viewportConstraints.maxHeight,
+                ),
+            child: Column(
+              children: [
+                if (this.title != null)
+                  Container(
+                    width: double.infinity,
+                    margin: EdgeInsets.only(bottom: size.height * 0.01),
+                    decoration: BoxDecoration(
+                      border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
+                    ),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                      child:
+                          Text(this.title, style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04)),
+                      margin: EdgeInsets.only(bottom: size.height * 0.01),
+                    ),
+                  ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                  child: this.child,
+                ),
+                this.footer != null
+                    ? Container(
+                        width: double.infinity,
+                        child: this.footer,
+                      )
+                    : Container()
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

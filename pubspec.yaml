@@ -36,6 +36,8 @@ dependencies:
   flutter_picker: ^1.1.5
   logging: ^0.11.4
   sentry: ">=3.0.0 <4.0.0"
+  pin_code_fields: ^5.1.0
+  flare_flutter: ^2.0.6
 
 
 dev_dependencies:
@@ -54,8 +56,8 @@ flutter:
   uses-material-design: true
 
   # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
+  assets:
+    - assets/flare/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see

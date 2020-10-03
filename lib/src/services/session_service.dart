@@ -2,13 +2,12 @@ import 'dart:convert';
 
 import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 
 class SessionService {
   final String baseUrl = "http://192.168.0.11:8080/login";
 
-  Future<Session> login(BuildContext context, String username, String password) async {
+  Future<Session> login(String username, String password) async {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data.putIfAbsent("username", () => username);
     data.putIfAbsent("password", () => password);
@@ -25,7 +24,6 @@ class SessionService {
 
       final session = Session();
       session.jwt = decodedData["jwt"];
-      session.userProfile = userProfile;
 
       return session;
     } else {
