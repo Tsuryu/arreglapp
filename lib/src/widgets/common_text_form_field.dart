@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 
 class CommonTextFormField extends StatelessWidget {
   final Function onChange;
+  final Function onFocusChange;
   final bool validateEmpty;
   final String label;
   final bool noSpaces;
@@ -23,6 +24,7 @@ class CommonTextFormField extends StatelessWidget {
     this.password = false,
     this.initialvalue,
     this.icon,
+    this.onFocusChange,
   });
 
   @override
@@ -32,40 +34,43 @@ class CommonTextFormField extends StatelessWidget {
 
     return Padding(
       padding: EdgeInsets.only(bottom: size.height * 0.01),
-      child: TextFormField(
-        initialValue: this.initialvalue,
-        inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_@.]'), allow: true)] : [],
-        decoration: InputDecoration(
-          isDense: true,
-          labelText: this.label,
-          border: OutlineInputBorder(),
-          helperText: '',
-          hintText: this.hint,
-          labelStyle: appTheme.textTheme.bodyText2,
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: appTheme.textTheme.bodyText2.color,
-              width: 2.0,
+      child: Focus(
+        onFocusChange: this.onFocusChange,
+        child: TextFormField(
+          initialValue: this.initialvalue,
+          inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_@.]'), allow: true)] : [],
+          decoration: InputDecoration(
+            isDense: true,
+            labelText: this.label,
+            border: OutlineInputBorder(),
+            helperText: '',
+            hintText: this.hint,
+            labelStyle: appTheme.textTheme.bodyText2,
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: appTheme.textTheme.bodyText2.color,
+                width: 2.0,
+              ),
             ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: appTheme.textTheme.bodyText2.color,
-              width: 0.5,
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: appTheme.textTheme.bodyText2.color,
+                width: 0.5,
+              ),
             ),
+            prefixIcon: this.icon == null
+                ? null
+                : Icon(
+                    this.icon,
+                    size: size.height * 0.04,
+                    color: appTheme.primaryColor,
+                  ),
           ),
-          prefixIcon: this.icon == null
-              ? null
-              : Icon(
-                  this.icon,
-                  size: size.height * 0.04,
-                  color: appTheme.primaryColor,
-                ),
+          validator: this.validateEmpty ? Util.formValidateEmpty : null,
+          onChanged: this.onChange != null ? this.onChange : () {},
+          style: appTheme.textTheme.bodyText2,
+          obscureText: this.password,
         ),
-        validator: this.validateEmpty ? Util.formValidateEmpty : null,
-        onChanged: this.onChange != null ? this.onChange : () {},
-        style: appTheme.textTheme.bodyText2,
-        obscureText: this.password,
       ),
     );
   }

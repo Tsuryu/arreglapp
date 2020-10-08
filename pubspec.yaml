@@ -38,11 +38,23 @@ dependencies:
   sentry: ">=3.0.0 <4.0.0"
   pin_code_fields: ^5.1.0
   flare_flutter: ^2.0.6
+  flutter_keyboard_visibility: ^3.2.2
 
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  flutter_launcher_icons: ^0.8.1
+
+flutter_icons:
+  android: "launcher_icon"
+  ios: true
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "assets/icon/icon.png"
+  # android: "splash_screen"
+  # image_path: "assets/icon/launcher.png"
+  # adaptive_icon_background: "assets/icon/launcher.png"
+  # ios: true
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

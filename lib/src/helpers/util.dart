@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' as services;
@@ -111,4 +113,17 @@ void showModalPicker({
       // }
     },
   ).showModal(context);
+}
+
+void scrollDownOnKeyboard(ScrollController scrollController, {position = 0.0}) {
+  Timer(
+    Duration(milliseconds: 200),
+    () => {
+      scrollController.animateTo(
+        scrollController.position.maxScrollExtent - position,
+        curve: Curves.fastOutSlowIn,
+        duration: Duration(seconds: 1),
+      )
+    },
+  );
 }

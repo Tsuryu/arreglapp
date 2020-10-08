@@ -1,4 +1,4 @@
-package com.example.arreglapp
+package com.unlz.arreglapp
 
 import io.flutter.embedding.android.FlutterActivity
 

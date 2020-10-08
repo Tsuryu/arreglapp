@@ -8,6 +8,7 @@ import 'package:arreglapp/src/widgets/common_text_form_field.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:provider/provider.dart';
 
@@ -105,7 +106,7 @@ class __PagesState extends State<_Pages> {
             children: <Widget>[
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.02),
-                child: _UserInfoForm(formKey: _formKeyPersonalData),
+                child: KeyboardVisibilityProvider(child: _UserInfoForm(formKey: _formKeyPersonalData)),
               ),
               Padding(
                 padding: EdgeInsets.only(bottom: size.height * 0.40),
@@ -247,6 +248,8 @@ class _UserInfoForm extends StatefulWidget {
 }
 
 class __UserInfoFormState extends State<_UserInfoForm> with AutomaticKeepAliveClientMixin {
+  final _controller = ScrollController();
+
   @override
   bool get wantKeepAlive => true;
 
@@ -255,6 +258,8 @@ class __UserInfoFormState extends State<_UserInfoForm> with AutomaticKeepAliveCl
     final size = MediaQuery.of(context).size;
 
     return BasicCard(
+      withExpanded: true,
+      scrollController: _controller,
       title: "Datos personales",
       child: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints viewportConstraints) {
@@ -262,7 +267,7 @@ class __UserInfoFormState extends State<_UserInfoForm> with AutomaticKeepAliveCl
             key: this.widget.formKey,
             child: Padding(
               padding: EdgeInsets.symmetric(vertical: size.height * 0.02),
-              child: _GeneralDataFields(),
+              child: _GeneralDataFields(scrollController: _controller),
             ),
           );
         },
@@ -272,8 +277,14 @@ class __UserInfoFormState extends State<_UserInfoForm> with AutomaticKeepAliveCl
 }
 
 class _GeneralDataFields extends StatelessWidget {
+  final ScrollController scrollController;
+
+  const _GeneralDataFields({this.scrollController});
+
   @override
   Widget build(BuildContext context) {
+    final bool isKeyboardVisible = KeyboardVisibilityProvider.isKeyboardVisible(context);
+    final size = MediaQuery.of(context).size;
     final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context);
     return Column(
       children: [
@@ -318,6 +329,11 @@ class _GeneralDataFields extends StatelessWidget {
           },
         ),
         CommonTextFormField(
+          onFocusChange: (hasFocus) {
+            if (hasFocus) {
+              scrollDownOnKeyboard(scrollController, position: size.height * 0.15);
+            }
+          },
           initialvalue: userEnrollmentProvider.city,
           label: 'Ciudad',
           validateEmpty: true,
@@ -328,6 +344,11 @@ class _GeneralDataFields extends StatelessWidget {
           },
         ),
         CommonTextFormField(
+          onFocusChange: (hasFocus) {
+            if (hasFocus) {
+              scrollDownOnKeyboard(scrollController);
+            }
+          },
           initialvalue: userEnrollmentProvider.address,
           label: 'Direccion',
           validateEmpty: true,
@@ -337,6 +358,7 @@ class _GeneralDataFields extends StatelessWidget {
             userEnrollmentProvider.address = value;
           },
         ),
+        SizedBox(height: isKeyboardVisible ? size.height * 0.2 : 0.0),
       ],
     );
   }
