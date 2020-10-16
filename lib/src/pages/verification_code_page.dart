@@ -1,9 +1,9 @@
 import 'dart:async';
 
 import 'package:arreglapp/src/helpers/util.dart';
-import 'package:arreglapp/src/pages/welcome_page.dart';
-import 'package:arreglapp/src/providers/session_provider_provider.dart';
-import 'package:arreglapp/src/services/user_profile_service.dart';
+import 'package:arreglapp/src/pages/error_page.dart';
+import 'package:arreglapp/src/providers/otp_provider.dart';
+import 'package:arreglapp/src/services/transaction_service.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:flutter/cupertino.dart';
@@ -14,20 +14,26 @@ import 'package:flare_flutter/flare_actor.dart';
 import 'package:provider/provider.dart';
 
 class VerificationCodePage extends StatelessWidget {
+  final Widget page;
+  final Function onValidationComplete;
+
+  const VerificationCodePage({@required this.page, this.onValidationComplete});
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: PinCodeVerificationScreen('vahnxp@gmail.com'),
+        child: PinCodeVerificationScreen(this.page, this.onValidationComplete),
       ),
     );
   }
 }
 
 class PinCodeVerificationScreen extends StatefulWidget {
-  final String email;
+  final Widget page;
+  final Function onValidationComplete;
 
-  PinCodeVerificationScreen(this.email);
+  PinCodeVerificationScreen(this.page, this.onValidationComplete);
 
   @override
   _PinCodeVerificationScreenState createState() => _PinCodeVerificationScreenState();
@@ -41,7 +47,6 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   StreamController<ErrorAnimationType> errorController;
 
   bool hasError = false;
-  String currentText = "";
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
 
@@ -66,6 +71,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final size = MediaQuery.of(context).size;
+    final otpProvider = Provider.of<OtpProvider>(context, listen: false);
 
     return Scaffold(
       key: scaffoldKey,
@@ -126,7 +132,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                       onChanged: (value) {
                         print(value);
                         setState(() {
-                          currentText = value;
+                          otpProvider.otp = value;
                         });
                       },
                       beforeTextPaste: (text) {
@@ -143,8 +149,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                     text: "ENVIAR",
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
-                        final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
-                        final result = await UserProfileService().activate(sessionProvider.userProfile, currentText);
+                        final result = await TransactionService().confirm(otpProvider.otp, otpProvider.traceId);
 
                         if (!result) {
                           setState(() {
@@ -154,7 +159,12 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                           return;
                         }
 
-                        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => WelcomePage()));
+                        Widget nextPage = widget.page;
+                        if (widget.onValidationComplete != null && !widget.onValidationComplete()) {
+                          nextPage = ErrorPage();
+                        }
+
+                        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
                       } else {
                         setState(() {
                           hasError = true;
@@ -170,7 +180,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                   text: "No reciviste el codigo? ",
                   style: appTheme.textTheme.bodyText2,
                   children: [
-                    TextSpan(text: " REENVIAR", recognizer: onTapRecognizer, style: appTheme.textTheme.bodyText1)
+                    TextSpan(text: " REENVIAR", recognizer: onTapRecognizer, style: appTheme.textTheme.bodyText1),
                   ],
                 ),
               ),
@@ -183,17 +193,14 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
 }
 
 class _Subtitle extends StatelessWidget {
-  const _Subtitle({
-    Key key,
-    @required this.widget,
-    @required this.appTheme,
-  }) : super(key: key);
+  const _Subtitle({@required this.widget, @required this.appTheme});
 
   final PinCodeVerificationScreen widget;
   final ThemeData appTheme;
 
   @override
   Widget build(BuildContext context) {
+    final otpProvider = Provider.of<OtpProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: size.width * 0.1, vertical: 8),
@@ -201,7 +208,7 @@ class _Subtitle extends StatelessWidget {
         text: TextSpan(
           text: "Por favor ingrese el codigo de verificacion enviado a ",
           children: [
-            TextSpan(text: widget.email, style: appTheme.textTheme.bodyText1),
+            TextSpan(text: otpProvider.email, style: appTheme.textTheme.bodyText1),
           ],
           style: appTheme.textTheme.bodyText2,
         ),
@@ -212,40 +219,24 @@ class _Subtitle extends StatelessWidget {
 }
 
 class _Title extends StatelessWidget {
-  const _Title({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Text(
-        'Verificacion de cuenta de email',
-        style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
-        textAlign: TextAlign.center,
-      ),
+      child:
+          Text('Verificacion de cuenta de email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22), textAlign: TextAlign.center),
     );
   }
 }
 
 class _FlareAnimation extends StatelessWidget {
-  const _FlareAnimation({
-    Key key,
-  }) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
 
     return Container(
       height: size.height / 3,
-      child: FlareActor(
-        "assets/flare/otp.flr",
-        animation: "otp",
-        fit: BoxFit.fitHeight,
-        alignment: Alignment.center,
-      ),
+      child: FlareActor("assets/flare/otp.flr", animation: "otp", fit: BoxFit.fitHeight, alignment: Alignment.center),
     );
   }
 }

@@ -8,14 +8,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'home_page.dart';
+class SuccessPage extends StatefulWidget {
+  final String title;
+  final Widget page;
 
-class WelcomePage extends StatefulWidget {
+  const SuccessPage({@required this.title, @required this.page});
+
   @override
-  _WelcomePageState createState() => _WelcomePageState();
+  _SuccessPageState createState() => _SuccessPageState();
 }
 
-class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStateMixin {
+class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStateMixin {
   AnimationController controller;
 
   @override
@@ -50,12 +53,15 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                 alignment: Alignment.center,
               ),
             ),
-            Text(
-              "Tu cuenta ha sido activada satisfactoriamente.",
-              style: appTheme.textTheme.bodyText2.copyWith(
-                fontSize: size.height * 0.03,
+            Padding(
+              padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+              child: Text(
+                widget.title,
+                style: appTheme.textTheme.bodyText2.copyWith(
+                  fontSize: size.height * 0.03,
+                ),
+                textAlign: TextAlign.center,
               ),
-              textAlign: TextAlign.center,
             ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
@@ -63,11 +69,11 @@ class _WelcomePageState extends State<WelcomePage> with SingleTickerProviderStat
                 mainButton: false,
                 text: "Continuar",
                 onPressed: () async {
-                  final Session result = await SessionService()
-                      .login(sessionProvider.userProfile.username, sessionProvider.userProfile.password);
+                  final Session result =
+                      await SessionService().login(sessionProvider.userProfile.username, sessionProvider.userProfile.password);
 
                   sessionProvider.session = result;
-                  await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
+                  await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => widget.page));
                   FocusManager.instance.primaryFocus.unfocus();
                   sessionProvider.session = null;
                 },

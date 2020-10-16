@@ -1,6 +1,7 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
+import 'package:arreglapp/src/pages/reset_password_page.dart';
 import 'package:arreglapp/src/pages/user_enrollment_page.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/session_service.dart';
@@ -18,19 +19,24 @@ import 'external_background.dart';
 class LoginPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: ExternalBackground(
-        child: Container(
-          width: double.infinity,
-          height: double.infinity,
-          child: SliderPageWrapper(
-            header: Container(),
-            getChildren: () {
-              return <Widget>[
-                _BasicInfoForm(),
-              ];
-            },
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        resizeToAvoidBottomInset: false,
+        body: ExternalBackground(
+          child: Container(
+            width: double.infinity,
+            height: double.infinity,
+            child: SliderPageWrapper(
+              header: Container(),
+              getChildren: () {
+                return <Widget>[
+                  _BasicInfoForm(),
+                ];
+              },
+            ),
           ),
         ),
       ),
@@ -70,7 +76,6 @@ class __LoginFormState extends State<_LoginForm> {
   @override
   Widget build(BuildContext context) {
     final loginProvider = Provider.of<_LoginProvider>(context);
-    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     return Container(
@@ -98,50 +103,95 @@ class __LoginFormState extends State<_LoginForm> {
                 loginProvider.password = value;
               },
             ),
+            _LoginButton(formKey: _formKey),
+            SizedBox(height: size.height * 0.02),
             Flex(
               direction: Axis.horizontal,
               children: [
-                CommonButton(
-                  text: 'Registrarse',
-                  withBorder: false,
-                  height: size.height * 0.075,
-                  width: size.width * 0.4,
-                  onPressed: () async {
-                    await Navigator.push(
-                        context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
-                    _formKey.currentState.reset();
-                  },
-                ),
+                _ResetPasswordButton(formKey: _formKey),
                 Expanded(child: Container()),
-                CommonButton(
-                  text: 'Ingresar',
-                  mainButton: false,
-                  height: size.height * 0.075,
-                  width: size.width * 0.4,
-                  onPressed: () async {
-                    if (!_formKey.currentState.validate()) {
-                      FocusManager.instance.primaryFocus.unfocus();
-                      showErrorSnackbar(context, 'Datos incorrectos');
-                      return;
-                    }
-                    final Session result = await SessionService().login(loginProvider.username, loginProvider.password);
-
-                    if (result == null) {
-                      showErrorSnackbar(context, 'Credenciales invalidas');
-                    } else {
-                      sessionProvider.session = result;
-                      await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
-                      FocusManager.instance.primaryFocus.unfocus();
-                      _formKey.currentState.reset();
-                      sessionProvider.session = null;
-                    }
-                  },
-                ),
+                _RegisterButton(formKey: _formKey),
               ],
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+class _ResetPasswordButton extends StatelessWidget {
+  const _ResetPasswordButton({@required GlobalKey<FormState> formKey}) : _formKey = formKey;
+  final GlobalKey<FormState> _formKey;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return CommonButton(
+      text: 'Recuperar contraseña',
+      withBorder: false,
+      height: size.height * 0.075,
+      width: size.width * 0.4,
+      onPressed: () async {
+        await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ResetPasswordEmailPage()));
+        _formKey.currentState.reset();
+      },
+    );
+  }
+}
+
+class _RegisterButton extends StatelessWidget {
+  const _RegisterButton({@required GlobalKey<FormState> formKey}) : _formKey = formKey;
+  final GlobalKey<FormState> _formKey;
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+    return CommonButton(
+      text: 'Registrarse',
+      withBorder: false,
+      height: size.height * 0.075,
+      width: size.width * 0.4,
+      onPressed: () async {
+        await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
+        _formKey.currentState.reset();
+      },
+    );
+  }
+}
+
+class _LoginButton extends StatelessWidget {
+  const _LoginButton({@required GlobalKey<FormState> formKey}) : _formKey = formKey;
+
+  final GlobalKey<FormState> _formKey;
+
+  @override
+  Widget build(BuildContext context) {
+    final loginProvider = Provider.of<_LoginProvider>(context);
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    final size = MediaQuery.of(context).size;
+
+    return CommonButton(
+      text: 'Ingresar',
+      mainButton: false,
+      height: size.height * 0.075,
+      width: double.infinity,
+      onPressed: () async {
+        if (!_formKey.currentState.validate()) {
+          FocusManager.instance.primaryFocus.unfocus();
+          showErrorSnackbar(context, 'Datos incorrectos');
+          return;
+        }
+        final Session result = await SessionService().login(loginProvider.username, loginProvider.password);
+
+        if (result == null) {
+          showErrorSnackbar(context, 'Credenciales invalidas');
+        } else {
+          sessionProvider.session = result;
+          await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
+          FocusManager.instance.primaryFocus.unfocus();
+          _formKey.currentState.reset();
+          sessionProvider.session = null;
+        }
+      },
     );
   }
 }

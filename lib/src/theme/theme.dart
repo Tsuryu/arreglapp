@@ -30,6 +30,7 @@ class ThemeChanger with ChangeNotifier {
         _customTheme = false;
         _currentTheme = ThemeData.dark().copyWith(
           primaryColor: _lightBrown,
+          canvasColor: _darkBrown,
           // canvasColor: _lightBrown,
           toggleableActiveColor: _lightBrown,
           cursorColor: _lightBrown,

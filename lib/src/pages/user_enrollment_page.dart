@@ -1,6 +1,9 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
+import 'package:arreglapp/src/pages/home_page.dart';
+import 'package:arreglapp/src/pages/success_page.dart';
 import 'package:arreglapp/src/pages/verification_code_page.dart';
+import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/user_profile_service.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
@@ -141,6 +144,7 @@ class _NextButton extends StatelessWidget {
     final lastPage = this.pages == this.currentPage + 1;
     final userEnrollmentProvider = Provider.of<_UserEnrollmentProvider>(context, listen: false);
     final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    final otpProvider = Provider.of<OtpProvider>(context, listen: false);
 
     return Container(
       child: Align(
@@ -160,9 +164,20 @@ class _NextButton extends StatelessWidget {
             var userProfile = userEnrollmentProvider.getUserProfile();
             var result = await UserProfileService().create(userProfile);
 
-            if (result) {
+            if (result != null) {
+              otpProvider.traceId = result;
               sessionProvider.userProfile = userProfile;
-              Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => VerificationCodePage()));
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => VerificationCodePage(
+                    page: SuccessPage(page: HomePage(), title: "exito"),
+                    onValidationComplete: () async {
+                      return await UserProfileService().activate(otpProvider.traceId, otpProvider.otp, userProfile);
+                    },
+                  ),
+                ),
+              );
             } else {
               showErrorSnackbar(context, 'Error creando el usuario, por favor intente mas tarde');
             }
@@ -329,36 +344,29 @@ class _GeneralDataFields extends StatelessWidget {
           },
         ),
         CommonTextFormField(
-          onFocusChange: (hasFocus) {
-            if (hasFocus) {
-              scrollDownOnKeyboard(scrollController, position: size.height * 0.15);
-            }
-          },
           initialvalue: userEnrollmentProvider.city,
           label: 'Ciudad',
           validateEmpty: true,
-          noSpaces: true,
           icon: FontAwesomeIcons.city,
           onChange: (String value) {
             userEnrollmentProvider.city = value;
           },
         ),
         CommonTextFormField(
-          onFocusChange: (hasFocus) {
-            if (hasFocus) {
-              scrollDownOnKeyboard(scrollController);
-            }
-          },
+          // onFocusChange: (hasFocus) {
+          //   if (hasFocus) {
+          //     scrollDownOnKeyboard(scrollController);
+          //   }
+          // },
           initialvalue: userEnrollmentProvider.address,
           label: 'Direccion',
           validateEmpty: true,
-          noSpaces: true,
           icon: FontAwesomeIcons.mapMarkerAlt,
           onChange: (String value) {
             userEnrollmentProvider.address = value;
           },
         ),
-        SizedBox(height: isKeyboardVisible ? size.height * 0.2 : 0.0),
+        SizedBox(height: isKeyboardVisible ? size.height * 0.25 : 0.0),
       ],
     );
   }

@@ -1,4 +1,6 @@
+import 'package:arreglapp/src/pages/error_page.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
+import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +12,7 @@ void main() {
     providers: [
       ChangeNotifierProvider(create: (_) => ThemeChanger(2)),
       ChangeNotifierProvider(create: (_) => SessionProvider()),
+      ChangeNotifierProvider(create: (_) => OtpProvider()),
     ],
     child: MyApp(),
   ));
