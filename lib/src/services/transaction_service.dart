@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class TransactionService {
-  final String baseUrl = "http://192.168.0.27:8081/transaction";
+  final String baseUrl = "http://192.168.0.23:8081/transaction";
   // final String baseUrl = "https://arreglapp-user-profile.herokuapp.com/login";
 
   Future<bool> confirm(String otp, String traceId) async {

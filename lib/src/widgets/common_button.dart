@@ -12,6 +12,7 @@ class CommonButton extends StatelessWidget {
   final double width;
   final double height;
   final bool withBorder;
+  final bool materialEffect;
 
   const CommonButton({
     @required this.text,
@@ -20,6 +21,7 @@ class CommonButton extends StatelessWidget {
     this.width,
     this.height,
     this.withBorder = true,
+    this.materialEffect = true,
   });
 
   @override
@@ -34,9 +36,13 @@ class CommonButton extends StatelessWidget {
       height: this.height != null ? this.height : buttonWidth / 4,
       child: FlatButton(
         onPressed: () {
-          Timer(Duration(milliseconds: 150), () {
+          if (materialEffect) {
+            Timer(Duration(milliseconds: 150), () {
+              onPressedParamFunction();
+            });
+          } else {
             onPressedParamFunction();
-          });
+          }
         },
         child: Text(
           this.text,

@@ -174,9 +174,10 @@ class _LoginButton extends StatelessWidget {
       mainButton: false,
       height: size.height * 0.075,
       width: double.infinity,
+      materialEffect: false,
       onPressed: () async {
+        FocusManager.instance.primaryFocus.unfocus();
         if (!_formKey.currentState.validate()) {
-          FocusManager.instance.primaryFocus.unfocus();
           showErrorSnackbar(context, 'Datos incorrectos');
           return;
         }

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
 import 'package:arreglapp/src/pages/success_page.dart';

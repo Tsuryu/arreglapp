@@ -1,10 +1,12 @@
 import 'package:arreglapp/src/helpers/util.dart';
+import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/pages/success_page.dart';
 import 'package:arreglapp/src/pages/verification_code_page.dart';
 import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
+import 'package:arreglapp/src/services/session_service.dart';
 import 'package:arreglapp/src/services/user_profile_service.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
 import 'package:arreglapp/src/widgets/common_text_form_field.dart';
@@ -171,10 +173,21 @@ class _NextButton extends StatelessWidget {
                 context,
                 CupertinoPageRoute(
                   builder: (BuildContext context) => VerificationCodePage(
-                    page: SuccessPage(page: HomePage(), title: "exito"),
                     onValidationComplete: () async {
                       return await UserProfileService().activate(otpProvider.traceId, otpProvider.otp, userProfile);
                     },
+                    page: SuccessPage(
+                      page: HomePage(),
+                      title: "Tu cuenta ha sido activada satisfactoriamente.",
+                      onPressed: () async {
+                        final Session result = await SessionService().login(sessionProvider.userProfile.username, sessionProvider.userProfile.password);
+
+                        sessionProvider.session = result;
+                        FocusManager.instance.primaryFocus.unfocus();
+                        sessionProvider.session = null;
+                        return result != null;
+                      },
+                    ),
                   ),
                 ),
               );

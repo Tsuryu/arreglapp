@@ -1,10 +1,12 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/pages/error_page.dart';
 import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/services/transaction_service.dart';
 import 'package:arreglapp/src/theme/theme.dart';
+import 'package:arreglapp/src/types/common-type.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
@@ -15,7 +17,7 @@ import 'package:provider/provider.dart';
 
 class VerificationCodePage extends StatelessWidget {
   final Widget page;
-  final Function onValidationComplete;
+  final FutureBoolCallback onValidationComplete;
 
   const VerificationCodePage({@required this.page, this.onValidationComplete});
 
@@ -31,15 +33,16 @@ class VerificationCodePage extends StatelessWidget {
 
 class PinCodeVerificationScreen extends StatefulWidget {
   final Widget page;
-  final Function onValidationComplete;
+  final FutureBoolCallback onValidationComplete;
 
   PinCodeVerificationScreen(this.page, this.onValidationComplete);
 
   @override
-  _PinCodeVerificationScreenState createState() => _PinCodeVerificationScreenState();
+  _PinCodeVerificationScreenState createState() => _PinCodeVerificationScreenState(this.onValidationComplete);
 }
 
 class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
+  final Future<bool> Function() onValidationComplete;
   var onTapRecognizer;
 
   TextEditingController textEditingController = TextEditingController()..text = "";
@@ -49,6 +52,8 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
   bool hasError = false;
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey<ScaffoldState>();
   final formKey = GlobalKey<FormState>();
+
+  _PinCodeVerificationScreenState(this.onValidationComplete);
 
   @override
   void initState() {
@@ -149,22 +154,26 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                     text: "ENVIAR",
                     onPressed: () async {
                       if (formKey.currentState.validate()) {
-                        final result = await TransactionService().confirm(otpProvider.otp, otpProvider.traceId);
+                        try {
+                          final result = await TransactionService().confirm(otpProvider.otp, otpProvider.traceId);
 
-                        if (!result) {
-                          setState(() {
-                            hasError = true;
-                          });
-                          showErrorSnackbar(context, "Codigo de activacion invalido");
-                          return;
+                          if (!result) {
+                            setState(() {
+                              hasError = true;
+                            });
+                            showErrorSnackbar(context, "Codigo de activacion invalido");
+                            return;
+                          }
+
+                          Widget nextPage = widget.page;
+                          if (widget.onValidationComplete != null && !await widget.onValidationComplete()) {
+                            nextPage = ErrorPage();
+                          }
+
+                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
+                        } catch (e) {
+                          log(e);
                         }
-
-                        Widget nextPage = widget.page;
-                        if (widget.onValidationComplete != null && !widget.onValidationComplete()) {
-                          nextPage = ErrorPage();
-                        }
-
-                        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
                       } else {
                         setState(() {
                           hasError = true;
@@ -223,8 +232,7 @@ class _Title extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child:
-          Text('Verificacion de cuenta de email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22), textAlign: TextAlign.center),
+      child: Text('Verificacion por cuenta de email', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22), textAlign: TextAlign.center),
     );
   }
 }

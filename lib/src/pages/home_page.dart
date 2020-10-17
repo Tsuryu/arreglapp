@@ -1,5 +1,8 @@
+import 'package:arreglapp/src/pages/login_page.dart';
+import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/theme/theme.dart';
 import 'package:arreglapp/src/widgets/plain_title_header.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -43,7 +46,17 @@ class _ItemList extends StatelessWidget {
           GridItem(color: Colors.green, title: 'Ofrecer servicios', iconData: FontAwesomeIcons.userTie),
           GridItem(color: Colors.purple, title: 'Configurar', iconData: FontAwesomeIcons.cog),
           GridItem(color: Colors.lightBlue, title: 'Soporte', iconData: FontAwesomeIcons.question),
-          GridItem(color: Colors.grey, title: 'Proximamente', iconData: FontAwesomeIcons.ad),
+          GridItem(
+            color: Colors.brown,
+            title: 'Salir',
+            iconData: FontAwesomeIcons.doorOpen,
+            onTap: () async {
+              final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+              sessionProvider.session = null;
+              sessionProvider.userProfile = null;
+              await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => LoginPage()));
+            },
+          ),
           GridItem(color: Colors.grey, title: 'Proximamente', iconData: FontAwesomeIcons.ad),
           GridItem(color: Colors.grey, title: 'Proximamente', iconData: FontAwesomeIcons.ad),
         ],
@@ -57,8 +70,9 @@ class GridItem extends StatelessWidget {
   final String title;
   final String subtitle;
   final IconData iconData;
+  final Function onTap;
 
-  const GridItem({this.color, this.title = "", this.subtitle = "", @required this.iconData});
+  const GridItem({this.color, this.title = "", this.subtitle = "", @required this.iconData, this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -76,7 +90,7 @@ class GridItem extends StatelessWidget {
         ),
         child: InkWell(
           onTap: () {
-            print("click");
+            this.onTap();
           },
           child: Center(
             child: Flex(

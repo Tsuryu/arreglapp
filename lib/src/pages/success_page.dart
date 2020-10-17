@@ -1,18 +1,19 @@
-import 'package:arreglapp/src/models/session.dart';
-import 'package:arreglapp/src/providers/session_provider_provider.dart';
-import 'package:arreglapp/src/services/session_service.dart';
 import 'package:arreglapp/src/theme/theme.dart';
+import 'package:arreglapp/src/types/common-type.dart';
 import 'package:arreglapp/src/widgets/common_button.dart';
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'error_page.dart';
+
 class SuccessPage extends StatefulWidget {
   final String title;
   final Widget page;
+  final FutureBoolCallback onPressed;
 
-  const SuccessPage({@required this.title, @required this.page});
+  const SuccessPage({@required this.title, @required this.page, this.onPressed});
 
   @override
   _SuccessPageState createState() => _SuccessPageState();
@@ -35,7 +36,6 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
     return Scaffold(
       body: Center(
@@ -69,13 +69,12 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
                 mainButton: false,
                 text: "Continuar",
                 onPressed: () async {
-                  final Session result =
-                      await SessionService().login(sessionProvider.userProfile.username, sessionProvider.userProfile.password);
+                  Widget nextPage = widget.page;
+                  if (widget.onPressed != null && !await widget.onPressed()) {
+                    nextPage = ErrorPage();
+                  }
 
-                  sessionProvider.session = result;
-                  await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => widget.page));
-                  FocusManager.instance.primaryFocus.unfocus();
-                  sessionProvider.session = null;
+                  await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
                 },
               ),
             )

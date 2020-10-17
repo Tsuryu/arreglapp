@@ -1,4 +1,3 @@
-import 'package:arreglapp/src/pages/error_page.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
 import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';

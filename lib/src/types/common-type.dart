@@ -1,0 +1,1 @@
+typedef Future<bool> FutureBoolCallback();

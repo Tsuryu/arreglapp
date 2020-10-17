@@ -5,7 +5,7 @@ import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:http/http.dart' as http;
 
 class UserProfileService {
-  final String baseUrl = "http://192.168.0.27:8080/user-profile";
+  final String baseUrl = "http://192.168.0.23:8080/user-profile";
   // final String baseUrl = "https://arreglapp-user-profile.herokuapp.com/user-profile";
 
   Future<String> create(UserProfile userProfile) async {
