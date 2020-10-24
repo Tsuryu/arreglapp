@@ -153,6 +153,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                     mainButton: true,
                     text: "ENVIAR",
                     onPressed: () async {
+                      FocusManager.instance.primaryFocus.unfocus();
                       if (formKey.currentState.validate()) {
                         try {
                           final result = await TransactionService().confirm(otpProvider.otp, otpProvider.traceId);

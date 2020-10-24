@@ -3,18 +3,16 @@ import 'dart:convert';
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:http/http.dart' as http;
+import 'package:arreglapp/constants/constants.dart' as Constants;
 
 class UserProfileService {
-  final String baseUrl = "http://192.168.0.23:8080/user-profile";
-  // final String baseUrl = "https://arreglapp-user-profile.herokuapp.com/user-profile";
-
   Future<String> create(UserProfile userProfile) async {
     try {
       final Map<String, dynamic> data = userProfile.toJson();
       removeNullAndEmptyParams(data);
       var header = {'Content-Type': 'application/json', "Accept": "application/json"};
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.post(baseUrl, body: json.encode(data), headers: header, encoding: encoding);
+      final response = await http.post(Constants.BASE_URL_USER_PROFILE, body: json.encode(data), headers: header, encoding: encoding);
 
       if (response.statusCode == 201) {
         final decodedData = json.decode(response.body);
@@ -37,7 +35,7 @@ class UserProfileService {
         "security-code": otp,
       };
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.put("$baseUrl/${userProfile.username}/activate", headers: header, encoding: encoding);
+      final response = await http.put("${Constants.BASE_URL_USER_PROFILE}/${userProfile.username}/activate", headers: header, encoding: encoding);
 
       if (response.statusCode != 200) {
         return false;
@@ -56,7 +54,7 @@ class UserProfileService {
       data.putIfAbsent("email", () => email);
       var header = {'Content-Type': 'application/json', "Accept": "application/json"};
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.post("$baseUrl/1/reset-password", body: json.encode(data), headers: header, encoding: encoding);
+      final response = await http.post("${Constants.BASE_URL_USER_PROFILE}/1/reset-password", body: json.encode(data), headers: header, encoding: encoding);
 
       if (response.statusCode == 201) {
         final decodedData = json.decode(response.body);
@@ -82,7 +80,7 @@ class UserProfileService {
         "security-code": otp,
       };
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.put("$baseUrl/1/password", body: json.encode(data), headers: header, encoding: encoding);
+      final response = await http.put("${Constants.BASE_URL_USER_PROFILE}/1/password", body: json.encode(data), headers: header, encoding: encoding);
 
       if (response.statusCode != 200) {
         return false;

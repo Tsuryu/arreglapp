@@ -1,3 +1,4 @@
+import 'package:arreglapp/src/pages/external_background.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/theme/theme.dart';
@@ -37,62 +38,72 @@ class _ErrorPageState extends State<ErrorPage> with SingleTickerProviderStateMix
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
 
-    return Scaffold(
-      body: Container(
-        decoration: new BoxDecoration(
-          gradient: new LinearGradient(
-            colors: [
-              appTheme.scaffoldBackgroundColor,
-              appTheme.canvasColor,
-            ],
-            begin: const FractionalOffset(0.5, 0.0),
-            end: const FractionalOffset(0.5, 1.0),
-            stops: [0.0, 1.0],
-            tileMode: TileMode.clamp,
-          ),
-        ),
-        child: Center(
-          child: Flex(
-            direction: Axis.vertical,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Container(
-                height: size.height * 0.5,
-                width: size.height * 0.5,
-                child: FlareActor(
-                  "assets/flare/error.flr",
-                  animation: "go",
-                  fit: BoxFit.fitHeight,
-                  alignment: Alignment.center,
-                ),
+    setState(() {});
+
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: ExternalBackground(
+          child: Container(
+            decoration: new BoxDecoration(
+              gradient: new LinearGradient(
+                colors: [
+                  appTheme.scaffoldBackgroundColor,
+                  appTheme.canvasColor,
+                ],
+                begin: const FractionalOffset(0.5, 0.0),
+                end: const FractionalOffset(0.5, 1.0),
+                stops: [0.0, 1.0],
+                tileMode: TileMode.clamp,
               ),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-                child: Text(
-                  widget.title,
-                  style: appTheme.textTheme.bodyText2.copyWith(
-                    fontSize: size.height * 0.03,
+            ),
+            child: Center(
+              child: Flex(
+                direction: Axis.vertical,
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Container(
+                    height: size.height * 0.5,
+                    width: size.height * 0.5,
+                    child: FlareActor(
+                      "assets/flare/error.flr",
+                      animation: "go",
+                      fit: BoxFit.fitHeight,
+                      alignment: Alignment.center,
+                    ),
                   ),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
-                child: CommonButton(
-                  mainButton: false,
-                  withBorder: false,
-                  text: "Volver",
-                  onPressed: () async {
-                    await Navigator.push(
-                      context,
-                      CupertinoPageRoute(
-                        builder: (BuildContext context) => sessionProvider.session != null ? HomePage() : LoginPage(),
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                    child: Text(
+                      widget.title,
+                      style: appTheme.textTheme.bodyText2.copyWith(
+                        fontSize: size.height * 0.03,
                       ),
-                    );
-                  },
-                ),
-              )
-            ],
+                      textAlign: TextAlign.center,
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
+                    child: CommonButton(
+                      mainButton: false,
+                      withBorder: false,
+                      text: "Volver",
+                      onPressed: () async {
+                        FocusManager.instance.primaryFocus.unfocus();
+                        await Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (BuildContext context) => sessionProvider.session != null ? HomePage() : LoginPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  )
+                ],
+              ),
+            ),
           ),
         ),
       ),

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'error_page.dart';
+import 'external_background.dart';
 
 class SuccessPage extends StatefulWidget {
   final String title;
@@ -37,48 +38,56 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
     final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    return Scaffold(
-      body: Center(
-        child: Flex(
-          direction: Axis.vertical,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Container(
-              height: size.height * 0.5,
-              width: size.height * 0.5,
-              child: FlareActor(
-                "assets/flare/check-inverted.flr",
-                animation: "Play",
-                fit: BoxFit.fitHeight,
-                alignment: Alignment.center,
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
-              child: Text(
-                widget.title,
-                style: appTheme.textTheme.bodyText2.copyWith(
-                  fontSize: size.height * 0.03,
+    return WillPopScope(
+      onWillPop: () async {
+        return false;
+      },
+      child: Scaffold(
+        body: ExternalBackground(
+          child: Center(
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: size.height * 0.5,
+                  width: size.height * 0.5,
+                  child: FlareActor(
+                    "assets/flare/check-inverted.flr",
+                    animation: "Play",
+                    fit: BoxFit.fitHeight,
+                    alignment: Alignment.center,
+                  ),
                 ),
-                textAlign: TextAlign.center,
-              ),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
+                  child: Text(
+                    widget.title,
+                    style: appTheme.textTheme.bodyText2.copyWith(
+                      fontSize: size.height * 0.03,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
+                  child: CommonButton(
+                    withBorder: false,
+                    mainButton: false,
+                    text: "Continuar",
+                    onPressed: () async {
+                      FocusManager.instance.primaryFocus.unfocus();
+                      Widget nextPage = widget.page;
+                      if (widget.onPressed != null && !await widget.onPressed()) {
+                        nextPage = ErrorPage();
+                      }
+                      await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
+                    },
+                  ),
+                )
+              ],
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: size.height * 0.05),
-              child: CommonButton(
-                mainButton: false,
-                text: "Continuar",
-                onPressed: () async {
-                  Widget nextPage = widget.page;
-                  if (widget.onPressed != null && !await widget.onPressed()) {
-                    nextPage = ErrorPage();
-                  }
-
-                  await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => nextPage));
-                },
-              ),
-            )
-          ],
+          ),
         ),
       ),
     );

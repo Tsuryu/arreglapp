@@ -75,6 +75,7 @@ class __FormState extends State<_Form> {
               height: size.height * 0.075,
               width: size.width * 0.4,
               onPressed: () async {
+                FocusManager.instance.primaryFocus.unfocus();
                 if (!_formKey.currentState.validate()) {
                   FocusManager.instance.primaryFocus.unfocus();
                   showErrorSnackbar(context, 'Datos incorrectos');

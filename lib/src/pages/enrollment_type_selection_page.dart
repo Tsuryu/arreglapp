@@ -41,8 +41,8 @@ class _TypeSelection extends StatelessWidget {
           CommonButton(
             text: 'Cliente',
             onPressed: () async {
-              bool result = await Navigator.push(
-                  context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
+              FocusManager.instance.primaryFocus.unfocus();
+              bool result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
               if (result) {
                 Navigator.pop(context);
               }
@@ -51,6 +51,7 @@ class _TypeSelection extends StatelessWidget {
           CommonButton(
             text: 'Proveedor',
             onPressed: () {
+              FocusManager.instance.primaryFocus.unfocus();
               Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProviderEnrollmentPage()));
             },
           ),

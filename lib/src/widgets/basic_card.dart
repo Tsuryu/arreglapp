@@ -11,6 +11,7 @@ class BasicCard extends StatelessWidget {
   final Widget footer;
   final ScrollController scrollController;
   final bool withExpanded;
+  final double height;
 
   const BasicCard({
     @required this.child,
@@ -19,6 +20,7 @@ class BasicCard extends StatelessWidget {
     this.footer,
     this.scrollController,
     this.withExpanded,
+    this.height,
   });
 
   @override
@@ -30,6 +32,7 @@ class BasicCard extends StatelessWidget {
       child: child,
       scrollController: scrollController,
       withExpanded: withExpanded,
+      height: this.height,
     );
   }
 }
@@ -42,6 +45,7 @@ class _Card extends StatelessWidget {
     @required this.child,
     this.scrollController,
     this.withExpanded,
+    this.height,
   });
 
   final Widget footer;
@@ -50,6 +54,7 @@ class _Card extends StatelessWidget {
   final Widget child;
   final ScrollController scrollController;
   final bool withExpanded;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
@@ -58,9 +63,7 @@ class _Card extends StatelessWidget {
 
     return Container(
       margin: EdgeInsets.only(left: size.width * 0.03, right: size.width * 0.03, top: size.height * 0.02),
-      padding: this.footer != null
-          ? EdgeInsets.only(top: size.height * 0.02)
-          : EdgeInsets.symmetric(vertical: size.height * 0.02),
+      padding: this.footer != null ? EdgeInsets.only(top: size.height * 0.02) : EdgeInsets.symmetric(vertical: size.height * 0.02),
       decoration: BoxDecoration(
         color: this.color != null ? this.color : appTheme.accentColor.withOpacity(0.75),
         borderRadius: BorderRadius.all(Radius.circular(15.0)),
@@ -79,6 +82,7 @@ class _Card extends StatelessWidget {
         footer: footer,
         scrollController: scrollController,
         withExpanded: withExpanded,
+        height: this.height,
       ),
     );
   }
@@ -91,6 +95,7 @@ class _ContentBuilder extends StatelessWidget {
     @required this.footer,
     this.scrollController,
     this.withExpanded = false,
+    this.height,
   });
 
   final String title;
@@ -98,52 +103,11 @@ class _ContentBuilder extends StatelessWidget {
   final Widget footer;
   final ScrollController scrollController;
   final bool withExpanded;
+  final double height;
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
-    // return LayoutBuilder(
-    //   builder: (BuildContext context, BoxConstraints viewportConstraints) {
-    //     return SingleChildScrollView(
-    //       controller: this.scrollController,
-    //       child: ConstrainedBox(
-    //         constraints: BoxConstraints(
-    //             // minHeight: viewportConstraints.maxHeight,
-    //             ),
-    //         child: Column(
-    //           children: [
-    //             if (this.title != null)
-    //               Container(
-    //                 width: double.infinity,
-    //                 margin: EdgeInsets.only(bottom: size.height * 0.01),
-    //                 decoration: BoxDecoration(
-    //                   border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
-    //                 ),
-    //                 child: Container(
-    //                   padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-    //                   child: Text(
-    //                     this.title,
-    //                     style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04),
-    //                   ),
-    //                   margin: EdgeInsets.only(bottom: size.height * 0.01),
-    //                 ),
-    //               ),
-    //             Container(
-    //               padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-    //               child: this.child,
-    //             ),
-    //             this.footer != null
-    //                 ? Container(
-    //                     width: double.infinity,
-    //                     child: this.footer,
-    //                   )
-    //                 : Container()
-    //           ],
-    //         ),
-    //       ),
-    //     );
-    //   },
-    // );
     Widget body;
     if (withExpanded != null && withExpanded)
       body = Expanded(
@@ -154,27 +118,30 @@ class _ContentBuilder extends StatelessWidget {
 
     return LayoutBuilder(
       builder: (BuildContext context, BoxConstraints viewportConstraints) {
-        return Flex(
-          direction: Axis.vertical,
-          children: [
-            if (this.title != null)
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.only(bottom: size.height * 0.01),
-                decoration: BoxDecoration(
-                  border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
-                ),
-                child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-                  child: Text(
-                    this.title,
-                    style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04),
-                  ),
+        return Container(
+          height: this.height,
+          child: Flex(
+            direction: Axis.vertical,
+            children: [
+              if (this.title != null)
+                Container(
+                  width: double.infinity,
                   margin: EdgeInsets.only(bottom: size.height * 0.01),
+                  decoration: BoxDecoration(
+                    border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
+                  ),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+                    child: Text(
+                      this.title,
+                      style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04),
+                    ),
+                    margin: EdgeInsets.only(bottom: size.height * 0.01),
+                  ),
                 ),
-              ),
-            body,
-          ],
+              body,
+            ],
+          ),
         );
       },
     );

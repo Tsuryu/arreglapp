@@ -1,11 +1,9 @@
 import 'dart:convert';
 
 import 'package:http/http.dart' as http;
+import 'package:arreglapp/constants/constants.dart' as Constants;
 
 class TransactionService {
-  final String baseUrl = "http://192.168.0.23:8081/transaction";
-  // final String baseUrl = "https://arreglapp-user-profile.herokuapp.com/login";
-
   Future<bool> confirm(String otp, String traceId) async {
     try {
       final Map<String, dynamic> data = Map<String, dynamic>();
@@ -15,7 +13,7 @@ class TransactionService {
       data.putIfAbsent("metadata", () => metaData);
       var header = {'Content-Type': 'application/json', "Accept": "application/json", "security-code": otp};
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.post(baseUrl + "/$traceId/detail", body: json.encode(data), headers: header, encoding: encoding);
+      final response = await http.post(Constants.BASE_URL_TRANSACTION + "/$traceId/detail", body: json.encode(data), headers: header, encoding: encoding);
 
       return response.statusCode == 201;
     } catch (e) {

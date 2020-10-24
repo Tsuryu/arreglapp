@@ -82,14 +82,13 @@ class __FormState extends State<_Form> {
             height: size.height * 0.075,
             width: double.infinity,
             onPressed: () async {
+              FocusManager.instance.primaryFocus.unfocus();
               if (!_formKey.currentState.validate()) {
-                FocusManager.instance.primaryFocus.unfocus();
                 showErrorSnackbar(context, 'Datos incorrectos');
                 return;
               }
 
               if (provider.confirmPassword != provider.newPassword) {
-                FocusManager.instance.primaryFocus.unfocus();
                 showErrorSnackbar(context, 'Las contraseñas no coinciden');
                 return;
               }

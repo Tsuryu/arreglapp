@@ -153,6 +153,7 @@ class _NextButton extends StatelessWidget {
         alignment: FractionalOffset.bottomRight,
         child: FlatButton(
           onPressed: () async {
+            FocusManager.instance.primaryFocus.unfocus();
             if (!lastPage) {
               this.pageController.nextPage(duration: Duration(milliseconds: 500), curve: Curves.ease);
               return;

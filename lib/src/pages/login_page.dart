@@ -132,6 +132,7 @@ class _ResetPasswordButton extends StatelessWidget {
       height: size.height * 0.075,
       width: size.width * 0.4,
       onPressed: () async {
+        FocusManager.instance.primaryFocus.unfocus();
         await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ResetPasswordEmailPage()));
         _formKey.currentState.reset();
       },
@@ -151,6 +152,7 @@ class _RegisterButton extends StatelessWidget {
       height: size.height * 0.075,
       width: size.width * 0.4,
       onPressed: () async {
+        FocusManager.instance.primaryFocus.unfocus();
         await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => UserEnrollmentPage()));
         _formKey.currentState.reset();
       },
@@ -186,6 +188,7 @@ class _LoginButton extends StatelessWidget {
         if (result == null) {
           showErrorSnackbar(context, 'Credenciales invalidas');
         } else {
+          sessionProvider.userProfile.username = loginProvider.username;
           sessionProvider.session = result;
           await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
           FocusManager.instance.primaryFocus.unfocus();

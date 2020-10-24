@@ -37,6 +37,9 @@ class CommonTextFormField extends StatelessWidget {
       child: Focus(
         onFocusChange: this.onFocusChange,
         child: TextFormField(
+          // keyboardType: TextInputType.multiline,
+          // minLines: 1,
+          // maxLines: 5,
           initialValue: this.initialvalue,
           inputFormatters: this.noSpaces ? [FilteringTextInputFormatter(RegExp(r'[a-zA-Z0-9-_@.]'), allow: true)] : [],
           decoration: InputDecoration(
