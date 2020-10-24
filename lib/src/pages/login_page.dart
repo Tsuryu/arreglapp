@@ -1,5 +1,6 @@
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/session.dart';
+import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
 import 'package:arreglapp/src/pages/reset_password_page.dart';
 import 'package:arreglapp/src/pages/user_enrollment_page.dart';
@@ -188,6 +189,9 @@ class _LoginButton extends StatelessWidget {
         if (result == null) {
           showErrorSnackbar(context, 'Credenciales invalidas');
         } else {
+          if (sessionProvider.userProfile == null) {
+            sessionProvider.userProfile = UserProfile();
+          }
           sessionProvider.userProfile.username = loginProvider.username;
           sessionProvider.session = result;
           await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => HomePage()));
