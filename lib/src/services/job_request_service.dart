@@ -25,4 +25,20 @@ class JobRequestService {
       return null;
     }
   }
+
+  Future<List<JobRequest>> listBy(String username, String jwt) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+      final response = await http.get(Constants.BASE_URL_CORE_OPERATION + "/service-request/list?username=" + username, headers: header);
+
+      if (response.statusCode == 200) {
+        return jobRequestFromJson(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 }

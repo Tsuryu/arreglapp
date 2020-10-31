@@ -43,7 +43,7 @@ class _RequestCard extends StatelessWidget {
       child: BasicCard(
         withExpanded: true,
         // height: size.height * 0.6,
-        title: requestProvider.title,
+        title: requestProvider.type,
         child: _RequestForm(),
       ),
     );
@@ -75,7 +75,7 @@ class __RequestFormState extends State<_RequestForm> {
               validateEmpty: true,
               icon: Icons.title,
               onChange: (String value) {
-                requestProvider.type = value;
+                requestProvider.title = value;
               },
             ),
             CommonTextFormField(

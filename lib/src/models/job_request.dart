@@ -4,39 +4,49 @@
 
 import 'dart:convert';
 
-JobRequest jobRequestFromJson(String str) => JobRequest.fromJson(json.decode(str));
+import 'operation_type.dart';
 
-String jobRequestToJson(JobRequest data) => json.encode(data.toJson());
+List<JobRequest> jobRequestFromJson(String str) => List<JobRequest>.from(json.decode(str).map((x) => JobRequest.fromJson(x)));
+
+String jobRequestToJson(List<JobRequest> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
 
 class JobRequest {
   JobRequest({
+    this.id,
     this.username,
     this.type,
     this.title,
     this.description,
     this.location,
+    this.operationType,
   });
 
+  String id;
   String username;
   String type;
   String title;
   String description;
   Location location;
+  OperationType operationType;
 
   factory JobRequest.fromJson(Map<String, dynamic> json) => JobRequest(
+        id: json["id"],
         username: json["username"],
         type: json["type"],
         title: json["title"],
         description: json["description"],
         location: Location.fromJson(json["location"]),
+        operationType: OperationType.fromJson(json["operation_type"]),
       );
 
   Map<String, dynamic> toJson() => {
+        "id": id,
         "username": username,
         "type": type,
         "title": title,
         "description": description,
-        "location": location.toJson(),
+        "location": location != null ? location.toJson() : null,
+        "operation_type": operationType != null ? operationType.toJson() : null,
       };
 }
 

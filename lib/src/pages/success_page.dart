@@ -38,6 +38,8 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
     final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
+    setState(() {});
+
     return WillPopScope(
       onWillPop: () async {
         return false;

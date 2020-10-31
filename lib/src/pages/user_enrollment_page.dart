@@ -185,7 +185,6 @@ class _NextButton extends StatelessWidget {
 
                         sessionProvider.session = result;
                         FocusManager.instance.primaryFocus.unfocus();
-                        sessionProvider.session = null;
                         return result != null;
                       },
                     ),

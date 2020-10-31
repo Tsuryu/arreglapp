@@ -26,19 +26,19 @@ class OperationType {
   String iconFamily;
 
   factory OperationType.fromJson(Map<String, dynamic> json) => OperationType(
-        id: json["ID"],
-        name: json["Name"],
-        description: json["Description"],
-        active: json["Active"],
+        id: json["id"],
+        name: json["name"],
+        description: json["description"],
+        active: json["active"],
         iconCode: json["icon_code"] == null ? null : json["icon_code"],
         iconFamily: json["icon_family"] == null ? null : json["icon_family"],
       );
 
   Map<String, dynamic> toJson() => {
-        "ID": id,
-        "Name": name,
-        "Description": description,
-        "Active": active,
+        "id": id,
+        "name": name,
+        "description": description,
+        "active": active,
         "icon_code": iconCode == null ? null : iconCode,
         "icon_family": iconFamily == null ? null : iconFamily,
       };

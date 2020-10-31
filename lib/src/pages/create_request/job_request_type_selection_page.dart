@@ -16,7 +16,7 @@ import 'package:slimy_card/slimy_card.dart';
 class JobRequestTypeSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final sessionProvider = Provider.of<SessionProvider>(context);
+    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     final requestProvider = Provider.of<RequestProvider>(context, listen: false);
 
     return Scaffold(
@@ -49,6 +49,7 @@ class _LocalSwiper extends StatelessWidget {
     final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context);
     final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+    requestProvider.type = types[0].name;
 
     return Stack(
       children: [
@@ -56,6 +57,7 @@ class _LocalSwiper extends StatelessWidget {
           padding: EdgeInsets.only(top: size.height * 0.1),
           child: Swiper(
             onIndexChanged: (index) {
+              requestProvider.type = types[index].name;
               requestProvider.title = types[index].name;
             },
             itemCount: this.itemCount,

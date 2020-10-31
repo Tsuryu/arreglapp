@@ -9,7 +9,7 @@ class PlainTitleHeader extends StatelessWidget {
   final String subtitle;
   final List<GestureIcon> buttons;
 
-  const PlainTitleHeader({@required this.title, this.subtitle = "", this.buttons = const []});
+  const PlainTitleHeader({@required this.title, this.subtitle, this.buttons = const []});
 
   @override
   Widget build(BuildContext context) {
@@ -21,26 +21,32 @@ class PlainTitleHeader extends StatelessWidget {
       alignment: Alignment.topLeft,
       // padding: EdgeInsets.symmetric(horizontal: size.width * 0.05),
       padding: EdgeInsets.only(left: size.width * 0.05, top: size.width * 0.05),
-      child: Row(
+      child: Flex(
+        direction: Axis.horizontal,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                this.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.w500,
-                  fontSize: size.height * 0.04,
-                  color: appTheme.textTheme.bodyText1.color,
+          Flexible(
+            child: Flex(
+              direction: Axis.vertical,
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  this.title,
+                  style: TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: size.height * 0.04,
+                    color: appTheme.textTheme.bodyText1.color,
+                  ),
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              this.subtitle != "" ? SizedBox(height: size.height * 0.01) : Container(),
-              this.subtitle != "" ? Text(this.subtitle, style: TextStyle(fontSize: size.height * 0.025)) : Container()
-            ],
+                this.subtitle != null ? SizedBox(height: size.height * 0.01) : Container(),
+                this.subtitle != null ? Text(this.subtitle, style: TextStyle(fontSize: size.height * 0.025)) : Container()
+              ],
+            ),
           ),
-          Spacer(),
-          Container(child: Row(children: this.buttons, mainAxisAlignment: MainAxisAlignment.end)),
+          // Spacer(),
+          this.buttons.length > 0 ? Flexible(child: Container(child: Row(children: this.buttons, mainAxisAlignment: MainAxisAlignment.end))) : Container(),
         ],
       ),
       decoration: BoxDecoration(

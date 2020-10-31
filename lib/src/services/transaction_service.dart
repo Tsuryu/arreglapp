@@ -7,9 +7,9 @@ class TransactionService {
   Future<bool> confirm(String otp, String traceId) async {
     try {
       final Map<String, dynamic> data = Map<String, dynamic>();
-      data.putIfAbsent("status", () => "confirm");
+      data.putIfAbsent("status", () => "confirmed");
       final Map<String, dynamic> metaData = Map<String, dynamic>();
-      metaData.putIfAbsent("message", () => "otp confirmation to reset password");
+      metaData.putIfAbsent("step", () => "otp confirmation to reset password");
       data.putIfAbsent("metadata", () => metaData);
       var header = {'Content-Type': 'application/json', "Accept": "application/json", "security-code": otp};
       final encoding = Encoding.getByName('utf-8');
