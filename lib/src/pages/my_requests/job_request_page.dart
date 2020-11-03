@@ -34,10 +34,7 @@ class JobRequestPage extends StatelessWidget {
 
 class _Chats extends StatelessWidget {
   final List<UserProfile> userProfiles = [
-    UserProfile(firstName: "Elida", lastName: "Torres", phone: "1153891653"),
-    UserProfile(firstName: "Sebastian", lastName: "Seballos", phone: "1165613345"),
-    UserProfile(firstName: "Carina", lastName: "Farias", phone: "1161132370"),
-    UserProfile(firstName: "Nelson", lastName: "Tavella", phone: "1138712046"),
+    UserProfile(firstName: "TestName", lastName: "TestLastname", phone: "1155223344"),
   ];
 
   @override
