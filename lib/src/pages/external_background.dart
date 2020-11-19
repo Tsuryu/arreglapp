@@ -1,18 +1,18 @@
 import 'package:arreglapp/src/theme/theme.dart';
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ExternalBackground extends StatelessWidget {
   final Widget child;
   final bool withBorderImage;
+  final bool backButton;
 
-  const ExternalBackground({@required this.child, this.withBorderImage = true});
+  const ExternalBackground({@required this.child, this.withBorderImage = true, this.backButton = true});
 
   @override
   Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChanger>(context);
-
+    final size = MediaQuery.of(context).size;
     return Container(
       decoration: new BoxDecoration(
         gradient: new LinearGradient(
@@ -38,6 +38,22 @@ class ExternalBackground extends StatelessWidget {
           //       )
           //     : Container(),
           this.child,
+          SafeArea(
+            child: Padding(
+              padding: EdgeInsets.only(top: size.height * 0.01),
+              child: this.backButton
+                  ? IconButton(
+                      icon: Icon(Icons.chevron_left),
+                      color: appTheme.currentTheme.accentColor,
+                      iconSize: size.height * 0.075,
+                      padding: EdgeInsets.all(0.0),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  : Container(),
+            ),
+          ),
         ],
       ),
     );

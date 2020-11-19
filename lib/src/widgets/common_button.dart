@@ -13,6 +13,7 @@ class CommonButton extends StatelessWidget {
   final double height;
   final bool withBorder;
   final bool materialEffect;
+  final bool disabled;
 
   const CommonButton({
     @required this.text,
@@ -22,6 +23,7 @@ class CommonButton extends StatelessWidget {
     this.height,
     this.withBorder = true,
     this.materialEffect = true,
+    this.disabled = false,
   });
 
   @override
@@ -35,21 +37,29 @@ class CommonButton extends StatelessWidget {
       width: this.width != null ? this.width : buttonWidth,
       height: this.height != null ? this.height : buttonWidth / 4,
       child: FlatButton(
-        onPressed: () {
-          if (materialEffect) {
-            Timer(Duration(milliseconds: 150), () {
-              onPressedParamFunction();
-            });
-          } else {
-            onPressedParamFunction();
-          }
-        },
+        onPressed: this.disabled
+            ? () {}
+            : () {
+                if (materialEffect) {
+                  Timer(Duration(milliseconds: 150), () {
+                    onPressedParamFunction();
+                  });
+                } else {
+                  onPressedParamFunction();
+                }
+              },
         child: Text(
           this.text,
           textAlign: TextAlign.center,
-          style: this.mainButton ? appTheme.textTheme.bodyText2 : appTheme.textTheme.bodyText2.copyWith(color: appTheme.accentColor),
+          style: this.mainButton
+              ? appTheme.textTheme.bodyText2
+              : appTheme.textTheme.bodyText2.copyWith(color: this.disabled ? Color(0xff888888) : appTheme.accentColor),
         ),
-        color: this.mainButton ? appTheme.accentColor : appTheme.scaffoldBackgroundColor,
+        color: this.disabled
+            ? Color(0xffaaaaaa)
+            : this.mainButton
+                ? appTheme.accentColor
+                : appTheme.scaffoldBackgroundColor,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(25.0),
           side: this.withBorder

@@ -46,6 +46,7 @@ class _ErrorPageState extends State<ErrorPage> with SingleTickerProviderStateMix
       },
       child: Scaffold(
         body: ExternalBackground(
+          backButton: false,
           child: Container(
             decoration: new BoxDecoration(
               gradient: new LinearGradient(

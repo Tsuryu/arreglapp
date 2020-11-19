@@ -11,7 +11,6 @@ class TextLabel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
     return RichText(
       text: TextSpan(

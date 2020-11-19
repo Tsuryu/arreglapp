@@ -98,8 +98,8 @@ class __PagesState extends State<_Pages> {
     return Column(
       children: [
         Container(
-          margin: EdgeInsets.only(top: size.height * 0.02),
-          height: size.height * 0.85,
+          margin: EdgeInsets.only(top: size.height * 0.075),
+          height: size.height * 0.8,
           child: PageView(
             physics: BouncingScrollPhysics(),
             controller: _pageController,
@@ -114,7 +114,7 @@ class __PagesState extends State<_Pages> {
                 child: KeyboardVisibilityProvider(child: _UserInfoForm(formKey: _formKeyPersonalData)),
               ),
               Padding(
-                padding: EdgeInsets.only(bottom: size.height * 0.40),
+                padding: EdgeInsets.only(bottom: size.height * 0.35),
                 child: _UserCredentialsForm(formKey: _formKeyCredentials),
               ),
               Padding(

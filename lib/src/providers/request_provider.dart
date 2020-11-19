@@ -7,12 +7,18 @@ class RequestProvider with ChangeNotifier {
   String _description;
   bool _locationAccepted = false;
   JobRequest _jobRequest;
+  bool _isNew = false;
 
   get type => this._type;
   get title => this._title;
   get description => this._description;
   get locationAccepted => this._locationAccepted;
   get jobRequest => this._jobRequest;
+  get isNew => this._isNew;
+
+  set isNew(bool value) {
+    this._isNew = value;
+  }
 
   set type(String value) {
     this._type = value;

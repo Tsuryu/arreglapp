@@ -14,6 +14,8 @@ class CommonTextFormField extends StatelessWidget {
   final bool password;
   final String initialvalue;
   final IconData icon;
+  final TextInputType keyboardType;
+  final TextEditingController controller;
 
   const CommonTextFormField({
     this.validateEmpty = false,
@@ -25,6 +27,8 @@ class CommonTextFormField extends StatelessWidget {
     this.initialvalue,
     this.icon,
     this.onFocusChange,
+    this.keyboardType = TextInputType.multiline,
+    this.controller,
   });
 
   @override
@@ -37,7 +41,8 @@ class CommonTextFormField extends StatelessWidget {
       child: Focus(
         onFocusChange: this.onFocusChange,
         child: TextFormField(
-          // keyboardType: TextInputType.multiline,
+          controller: this.controller,
+          keyboardType: this.keyboardType,
           // minLines: 1,
           // maxLines: 5,
           initialValue: this.initialvalue,

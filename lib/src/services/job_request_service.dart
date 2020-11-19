@@ -41,4 +41,71 @@ class JobRequestService {
       return null;
     }
   }
+
+  Future<List<JobRequest>> searchRequests(String jwt) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+      final response = await http.get(Constants.BASE_URL_CORE_OPERATION + "/service-request/search", headers: header);
+
+      if (response.statusCode == 200) {
+        return jobRequestFromJson(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<List<JobRequest>> searchOngoing(String jwt) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+      final response = await http.get(Constants.BASE_URL_CORE_OPERATION + "/service-request/professional/list", headers: header);
+
+      if (response.statusCode == 200) {
+        return jobRequestFromJson(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<bool> initChat(String jwt, String traceID) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt", "trace-id": traceID};
+      final encoding = Encoding.getByName('utf-8');
+      final response = await http.post(Constants.BASE_URL_CORE_OPERATION + "/service-request/init-chat", headers: header, encoding: encoding);
+
+      if (response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> confirmProfessional(String jwt, String traceID, String professionalID) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt", "trace-id": traceID};
+      final encoding = Encoding.getByName('utf-8');
+      final response =
+          await http.post(Constants.BASE_URL_CORE_OPERATION + "/service-request/professional/$professionalID/confirm", headers: header, encoding: encoding);
+
+      if (response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

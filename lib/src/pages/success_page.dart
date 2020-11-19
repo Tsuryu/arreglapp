@@ -38,7 +38,9 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
     final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
 
-    setState(() {});
+    Future.delayed(Duration(milliseconds: 100), () {
+      setState(() {});
+    });
 
     return WillPopScope(
       onWillPop: () async {
@@ -46,6 +48,7 @@ class _SuccessPageState extends State<SuccessPage> with SingleTickerProviderStat
       },
       child: Scaffold(
         body: ExternalBackground(
+          backButton: false,
           child: Center(
             child: Flex(
               direction: Axis.vertical,

@@ -131,11 +131,7 @@ class _PinCodeVerificationScreenState extends State<PinCodeVerificationScreen> {
                       enableActiveFill: true,
                       errorAnimationController: errorController,
                       controller: textEditingController,
-                      onCompleted: (v) {
-                        print("Completed");
-                      },
                       onChanged: (value) {
-                        print(value);
                         setState(() {
                           otpProvider.otp = value;
                         });

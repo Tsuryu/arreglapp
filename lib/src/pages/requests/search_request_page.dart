@@ -1,6 +1,6 @@
 import 'package:arreglapp/src/models/job_request.dart';
 import 'package:arreglapp/src/pages/external_background.dart';
-import 'package:arreglapp/src/pages/my_requests/job_request_page.dart';
+import 'package:arreglapp/src/pages/requests/job_request_page.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/job_request_service.dart';
@@ -13,7 +13,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-class JobRequestListPage extends StatelessWidget {
+class SearchRequestPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -37,12 +37,16 @@ class JobList extends StatelessWidget {
   Widget build(BuildContext context) {
     final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     return FutureBuilder(
-      future: JobRequestService().listBy(sessionProvider.userProfile.username, sessionProvider.session.jwt),
+      future: JobRequestService().searchRequests(sessionProvider.session.jwt),
       builder: (BuildContext context, AsyncSnapshot<List<JobRequest>> snapshot) {
-        if (snapshot.hasData && !snapshot.hasError && snapshot.data.length > 0) {
-          return _List(jobList: snapshot.data, itemCount: snapshot.data.length);
-        } else {
+        if (!snapshot.hasData || snapshot.hasError) {
           return Loading();
+        }
+
+        if (snapshot.data.length > 0) {
+          return Container();
+        } else {
+          return _List(jobList: snapshot.data, itemCount: snapshot.data.length);
         }
       },
     );
@@ -92,7 +96,7 @@ class _List extends StatelessWidget {
               title: RichText(
                 text: TextSpan(
                   children: [
-                    TextSpan(text: "(Pendiente) ", style: appTheme.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold)),
+                    // TextSpan(text: "(Pendiente) ", style: appTheme.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold)),
                     TextSpan(text: jobList[index].title, style: appTheme.textTheme.bodyText2),
                   ],
                 ),
@@ -102,7 +106,8 @@ class _List extends StatelessWidget {
               onTap: () async {
                 final requestProvider = Provider.of<RequestProvider>(context, listen: false);
                 requestProvider.jobRequest = jobList[index];
-                await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: index)));
+                await Navigator.push(
+                    context, CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: index, myRequest: false, traceID: jobList[index].id)));
               },
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -119,6 +124,6 @@ class _List extends StatelessWidget {
 class _Header extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return PlainTitleHeader(title: 'Mis solicitudes');
+    return PlainTitleHeader(title: 'Buscar solicitudes');
   }
 }

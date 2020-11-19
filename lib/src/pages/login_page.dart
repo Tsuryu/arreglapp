@@ -27,6 +27,7 @@ class LoginPage extends StatelessWidget {
       child: Scaffold(
         resizeToAvoidBottomInset: false,
         body: ExternalBackground(
+          backButton: false,
           child: Container(
             width: double.infinity,
             height: double.infinity,

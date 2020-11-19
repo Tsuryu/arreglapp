@@ -187,42 +187,42 @@ class _CardBody extends StatelessWidget {
   }
 }
 
-class _Content extends StatelessWidget {
-  const _Content({@required this.title, @required this.child, @required this.footer});
+// class _Content extends StatelessWidget {
+//   const _Content({@required this.title, @required this.child, @required this.footer});
 
-  final String title;
-  final Widget child;
-  final Widget footer;
+//   final String title;
+//   final Widget child;
+//   final Widget footer;
 
-  @override
-  Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
-    return Column(
-      children: [
-        if (this.title != null)
-          Container(
-            width: double.infinity,
-            margin: EdgeInsets.only(bottom: size.height * 0.01),
-            decoration: BoxDecoration(
-              border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
-            ),
-            child: Container(
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-              child: Text(this.title, style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04)),
-              margin: EdgeInsets.only(bottom: size.height * 0.01),
-            ),
-          ),
-        Container(
-          padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
-          child: this.child,
-        ),
-        this.footer != null
-            ? Container(
-                width: double.infinity,
-                child: this.footer,
-              )
-            : Container()
-      ],
-    );
-  }
-}
+//   @override
+//   Widget build(BuildContext context) {
+//     final size = MediaQuery.of(context).size;
+//     return Column(
+//       children: [
+//         if (this.title != null)
+//           Container(
+//             width: double.infinity,
+//             margin: EdgeInsets.only(bottom: size.height * 0.01),
+//             decoration: BoxDecoration(
+//               border: Border(bottom: BorderSide(width: 1.0, color: Colors.grey)),
+//             ),
+//             child: Container(
+//               padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+//               child: Text(this.title, style: TextStyle(fontWeight: FontWeight.w500, fontSize: size.height * 0.04)),
+//               margin: EdgeInsets.only(bottom: size.height * 0.01),
+//             ),
+//           ),
+//         Container(
+//           padding: EdgeInsets.symmetric(horizontal: size.width * 0.03),
+//           child: this.child,
+//         ),
+//         this.footer != null
+//             ? Container(
+//                 width: double.infinity,
+//                 child: this.footer,
+//               )
+//             : Container()
+//       ],
+//     );
+//   }
+// }
