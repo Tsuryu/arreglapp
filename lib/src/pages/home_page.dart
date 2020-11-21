@@ -64,24 +64,24 @@ class ItemList extends StatelessWidget {
                 delay: 250,
               ),
               Expanded(child: Container()),
-              GridItem(title: 'Ofrecer servicios', iconData: FontAwesomeIcons.userTie, delay: 500),
+              GridItem(
+                title: 'Solicitudes',
+                iconData: FontAwesomeIcons.fileAlt,
+                delay: 500,
+                onTap: () {
+                  FocusManager.instance.primaryFocus.unfocus();
+                  Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => RequestTypeSelectionPage()));
+                },
+              ),
             ],
           ),
           SizedBox(height: size.height * 0.02),
           Flex(
             direction: Axis.horizontal,
             children: [
-              GridItem(
-                title: 'Solicitudes',
-                iconData: FontAwesomeIcons.fileAlt,
-                delay: 750,
-                onTap: () {
-                  FocusManager.instance.primaryFocus.unfocus();
-                  Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => RequestTypeSelectionPage()));
-                },
-              ),
+              GridItem(title: 'Configurar', iconData: FontAwesomeIcons.cog, delay: 750),
               Expanded(child: Container()),
-              GridItem(title: 'Configurar', iconData: FontAwesomeIcons.cog, delay: 1000),
+              GridItem(title: 'Soporte', iconData: FontAwesomeIcons.question, delay: 1000),
             ],
           ),
           SizedBox(height: size.height * 0.02),
@@ -100,8 +100,6 @@ class ItemList extends StatelessWidget {
                 },
                 delay: 1250,
               ),
-              Expanded(child: Container()),
-              GridItem(title: 'Soporte', iconData: FontAwesomeIcons.question, delay: 1500),
             ],
           ),
         ],

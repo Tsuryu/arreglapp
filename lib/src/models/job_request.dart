@@ -21,6 +21,7 @@ class JobRequest {
     this.operationType,
     this.userContactInfo,
     this.chats,
+    this.budget,
   });
 
   String id;
@@ -32,6 +33,7 @@ class JobRequest {
   OperationType operationType;
   UserContactInfo userContactInfo;
   List<UserContactInfo> chats;
+  Budget budget;
 
   factory JobRequest.fromJson(Map<String, dynamic> json) => JobRequest(
         id: json["id"],
@@ -43,6 +45,7 @@ class JobRequest {
         operationType: OperationType.fromJson(json["operation_type"]),
         userContactInfo: UserContactInfo.fromJson(json["user_contact_info"]),
         chats: json["chats"] != null ? List<UserContactInfo>.from(json["chats"].map((x) => UserContactInfo.fromJson(x))) : null,
+        budget: json["budget"] != null ? Budget.fromJson(json["budget"]) : null,
       );
 
   Map<String, dynamic> toJson() => {
@@ -54,7 +57,32 @@ class JobRequest {
         "location": location != null ? location.toJson() : null,
         "operation_type": operationType != null ? operationType.toJson() : null,
         "user_contact_info": userContactInfo != null ? userContactInfo.toJson() : null,
-        "chats": chats != null ? chatsToJson(chats) : null
+        "chats": chats != null ? chatsToJson(chats) : null,
+        "budget": budget.toJson(),
+      };
+}
+
+class Budget {
+  Budget({
+    this.amount,
+    this.date,
+    this.username,
+  });
+
+  double amount;
+  DateTime date;
+  String username;
+
+  factory Budget.fromJson(Map<String, dynamic> json) => Budget(
+        amount: json["Amount"].toDouble(),
+        date: DateTime.parse(json["Date"]),
+        username: json["Username"],
+      );
+
+  Map<String, dynamic> toJson() => {
+        "Amount": amount,
+        "Date": date.toIso8601String(),
+        "Username": username,
       };
 }
 

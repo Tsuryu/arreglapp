@@ -210,17 +210,25 @@ class _BudgetButtom extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final requestProvider = Provider.of<RequestProvider>(context, listen: false);
-    var test = requestProvider.jobRequest.userContactInfo.confirmed;
 
     return Container(
       padding: EdgeInsets.only(top: size.height * 0.02, left: size.width * 0.5, right: size.width * 0.04),
       child: CommonButton(
-        disabled: !requestProvider.jobRequest.userContactInfo.confirmed,
+        disabled: !requestProvider.jobRequest.userContactInfo.confirmed && !myRequest,
         mainButton: false,
         withBorder: false,
         text: this.myRequest ? "Ver presupuesto" : "Presupuestar",
-        onPressed: () {
-          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage()));
+        onPressed: () async {
+          if (requestProvider.jobRequest.budget != null && !myRequest) {
+            return showInfoSnackbar(context, "Ya existe un presupuesto");
+          }
+          if (myRequest && requestProvider.jobRequest.budget == null) {
+            return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
+          }
+          final result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
+          if (result != null) {
+            showSuccessSnackbar(context, "result");
+          }
         },
       ),
     );
