@@ -33,8 +33,9 @@ class PushNotificationsProvider with ChangeNotifier {
       },
       onResume: (info) {
         print('onResume: $info');
-        final argument = info['data']['comida'];
-        print('argument: $argument');
+        if (Platform.isAndroid) {
+          message = info['data']['jobRequest'] ?? 'no-data';
+        }
       },
     );
   }

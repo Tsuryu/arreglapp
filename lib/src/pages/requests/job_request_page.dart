@@ -225,9 +225,10 @@ class _BudgetButtom extends StatelessWidget {
           if (myRequest && requestProvider.jobRequest.budget == null) {
             return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
           }
-          final result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
+          final result =
+              await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
           if (result != null) {
-            showSuccessSnackbar(context, "result");
+            showSuccessSnackbar(context, result);
           }
         },
       ),
@@ -252,7 +253,8 @@ class _GeneralInfo extends StatelessWidget {
               direction: Axis.vertical,
               children: [
                 Icon(
-                  IconData(requestProvider.jobRequest.operationType.iconCode, fontFamily: requestProvider.jobRequest.operationType.iconFamily),
+                  IconData(requestProvider.jobRequest.operationType.iconCode,
+                      fontFamily: requestProvider.jobRequest.operationType.iconFamily),
                   size: size.height * 0.15,
                   color: appTheme.primaryColor,
                 ),

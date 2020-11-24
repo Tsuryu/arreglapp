@@ -90,7 +90,7 @@ class __FormState extends State<_Form> {
             label: 'Monto',
             validateEmpty: true,
             noSpaces: true,
-            readOnly: true,
+            readOnly: widget.myRequest ? true : false,
             keyboardType: TextInputType.number,
             icon: FontAwesomeIcons.dollarSign,
             onFocusChange: widget.myRequest
