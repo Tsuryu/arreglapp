@@ -17,18 +17,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_open_whatsapp/flutter_open_whatsapp.dart';
 import 'package:provider/provider.dart';
 
+import '../home_page.dart';
+
 class JobRequestPage extends StatelessWidget {
   final String traceID;
   final bool myRequest;
   final int index;
   final String title;
+  final bool returnHome;
 
-  const JobRequestPage({@required this.index, @required this.myRequest, this.traceID, this.title});
+  const JobRequestPage({@required this.index, @required this.myRequest, this.traceID, this.title, this.returnHome = false});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: ExternalBackground(
+        popTo: returnHome ? HomePage() : null,
         child: SliderPageWrapper(
           // header: Hero(tag: "request_item$index", child: _Header()),
           header: _Header(title: this.title),
@@ -174,7 +178,11 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
                         final requestProvider = Provider.of<RequestProvider>(context, listen: false);
                         if (!widget.myRequest && requestProvider.isNew) {
                           final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
-                          final result = await JobRequestService().initChat(sessionProvider.session.jwt, requestProvider.jobRequest.id);
+                          final result = await JobRequestService().initChat(
+                            sessionProvider.session.jwt,
+                            requestProvider.jobRequest.id,
+                            requestProvider.jobRequest.userContactInfo.username,
+                          );
                           requestProvider.isNew = false;
                           if (!result) {
                             showErrorSnackbar(context, "No se pudo iniciar el chat");
@@ -225,8 +233,7 @@ class _BudgetButtom extends StatelessWidget {
           if (myRequest && requestProvider.jobRequest.budget == null) {
             return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
           }
-          final result =
-              await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
+          final result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
           if (result != null) {
             showSuccessSnackbar(context, result);
           }
@@ -253,8 +260,7 @@ class _GeneralInfo extends StatelessWidget {
               direction: Axis.vertical,
               children: [
                 Icon(
-                  IconData(requestProvider.jobRequest.operationType.iconCode,
-                      fontFamily: requestProvider.jobRequest.operationType.iconFamily),
+                  IconData(requestProvider.jobRequest.operationType.iconCode, fontFamily: requestProvider.jobRequest.operationType.iconFamily),
                   size: size.height * 0.15,
                   color: appTheme.primaryColor,
                 ),

@@ -1,4 +1,5 @@
 import 'package:arreglapp/src/theme/theme.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -6,8 +7,9 @@ class ExternalBackground extends StatelessWidget {
   final Widget child;
   final bool withBorderImage;
   final bool backButton;
+  final Widget popTo;
 
-  const ExternalBackground({@required this.child, this.withBorderImage = true, this.backButton = true});
+  const ExternalBackground({@required this.child, this.withBorderImage = true, this.backButton = true, this.popTo});
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +50,9 @@ class ExternalBackground extends StatelessWidget {
                       iconSize: size.height * 0.075,
                       padding: EdgeInsets.all(0.0),
                       onPressed: () {
+                        if (this.popTo != null) {
+                          return Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => this.popTo));
+                        }
                         Navigator.pop(context);
                       },
                     )

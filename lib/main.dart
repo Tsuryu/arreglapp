@@ -43,18 +43,36 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    final pushProvider = Provider.of<PushNotificationsProvider>(context);
-    if (pushProvider.message != null) {
-      final jobRequest = JobRequest.fromJson(jsonDecode(pushProvider.message));
-      final requestProvider = Provider.of<RequestProvider>(context, listen: false);
-      requestProvider.jobRequest = jobRequest;
-      navigatorKey.currentState.push(CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: 0, myRequest: true, title: "test")));
-    }
+    // final pushProvider = Provider.of<PushNotificationsProvider>(context);
+    // if (pushProvider.message != null) {
+    //   final jobRequest = JobRequest.fromJson(jsonDecode(pushProvider.message));
+    //   final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+    //   requestProvider.jobRequest = jobRequest;
+
+    //   if (pushProvider.message == "onResume") {
+    //     navigatorKey.currentState.push(CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: 0, myRequest: true, title: "test")));
+    //   }
+
+    //   if (pushProvider.event == "onMessage") {
+    //     showYesNoDialog(
+    //       context: context,
+    //       content: 'Quieres ver la actualizacion ahora?',
+    //       title: 'Estado de solicitud',
+    //       onCancel: () {
+    //         Navigator.pop(context);
+    //       },
+    //       onConfirm: () {
+    //         navigatorKey.currentState.push(CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: 0, myRequest: true, title: "test")));
+    //       },
+    //     );
+    //     print("object");
+    //   }
+    // }
     final appTheme = Provider.of<ThemeChanger>(context);
     changeStatusLight();
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      navigatorKey: navigatorKey,
+      // navigatorKey: navigatorKey,
       title: 'Arreglapp',
       theme: appTheme.currentTheme,
       home: LoginPage(),

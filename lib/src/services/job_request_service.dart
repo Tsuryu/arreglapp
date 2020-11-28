@@ -74,11 +74,15 @@ class JobRequestService {
     }
   }
 
-  Future<bool> initChat(String jwt, String traceID) async {
+  Future<bool> initChat(String jwt, String traceID, String to) async {
     try {
       var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt", "trace-id": traceID};
       final encoding = Encoding.getByName('utf-8');
-      final response = await http.post(Constants.BASE_URL_CORE_OPERATION + "/service-request/init-chat", headers: header, encoding: encoding);
+      final Map<String, String> data = Map<String, String>();
+      data.putIfAbsent("to", () => to);
+
+      final response =
+          await http.post(Constants.BASE_URL_CORE_OPERATION + "/service-request/init-chat", body: json.encode(data), headers: header, encoding: encoding);
 
       if (response.statusCode == 201) {
         return true;

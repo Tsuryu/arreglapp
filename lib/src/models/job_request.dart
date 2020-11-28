@@ -58,7 +58,7 @@ class JobRequest {
         "operation_type": operationType != null ? operationType.toJson() : null,
         "user_contact_info": userContactInfo != null ? userContactInfo.toJson() : null,
         "chats": chats != null ? chatsToJson(chats) : null,
-        "budget": budget.toJson(),
+        "budget": budget != null ? budget.toJson() : null,
       };
 }
 

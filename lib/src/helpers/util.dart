@@ -127,3 +127,35 @@ void scrollDownOnKeyboard(ScrollController scrollController, {position = 0.0}) {
     },
   );
 }
+
+Function _default() {}
+
+showYesNoDialog({BuildContext context, Function onCancel = _default, Function onConfirm = _default, String title, String content}) {
+  // set up the buttons
+  Widget cancelButton = FlatButton(
+    child: Text("No"),
+    onPressed: onCancel,
+  );
+  Widget continueButton = FlatButton(
+    child: Text("Si"),
+    onPressed: onConfirm,
+  );
+
+  // set up the AlertDialog
+  AlertDialog alert = AlertDialog(
+    title: Text(title),
+    content: Text(content),
+    actions: [
+      cancelButton,
+      continueButton,
+    ],
+  );
+
+  // show the dialog
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return alert;
+    },
+  );
+}

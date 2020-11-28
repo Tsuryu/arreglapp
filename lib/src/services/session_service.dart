@@ -6,11 +6,12 @@ import 'package:http/http.dart' as http;
 import 'package:arreglapp/constants/constants.dart' as Constants;
 
 class SessionService {
-  Future<Session> login(String username, String password) async {
+  Future<Session> login(String username, String password, String token) async {
     try {
       final Map<String, dynamic> data = Map<String, dynamic>();
       data.putIfAbsent("username", () => username);
       data.putIfAbsent("password", () => password);
+      data.putIfAbsent("token", () => token);
       var header = {'Content-Type': 'application/json', "Accept": "application/json"};
       final encoding = Encoding.getByName('utf-8');
       final response = await http.post(Constants.BASE_URL_SESSION + "/login", body: json.encode(data), headers: header, encoding: encoding);

@@ -181,7 +181,7 @@ class _NextButton extends StatelessWidget {
                       page: HomePage(),
                       title: "Tu cuenta ha sido activada satisfactoriamente.",
                       onPressed: () async {
-                        final Session result = await SessionService().login(sessionProvider.userProfile.username, sessionProvider.userProfile.password);
+                        final Session result = await SessionService().login(sessionProvider.userProfile.username, sessionProvider.userProfile.password, "");
 
                         sessionProvider.session = result;
                         FocusManager.instance.primaryFocus.unfocus();

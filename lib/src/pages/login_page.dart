@@ -1,9 +1,15 @@
+import 'dart:convert';
+
 import 'package:arreglapp/src/helpers/util.dart';
+import 'package:arreglapp/src/models/job_request.dart';
 import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
+import 'package:arreglapp/src/pages/requests/job_request_page.dart';
 import 'package:arreglapp/src/pages/reset_password_page.dart';
 import 'package:arreglapp/src/pages/user_enrollment_page.dart';
+import 'package:arreglapp/src/providers/push_notifications_provider.dart';
+import 'package:arreglapp/src/providers/request_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/session_service.dart';
 import 'package:arreglapp/src/widgets/basic_card.dart';
@@ -17,9 +23,55 @@ import 'package:provider/provider.dart';
 
 import 'external_background.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
+  @override
+  _LoginPageState createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    final pushProvider = Provider.of<PushNotificationsProvider>(context);
+    if (pushProvider.event != null) {
+      final event = pushProvider.event;
+      pushProvider.event = null;
+      final jobRequest = JobRequest.fromJson(jsonDecode(pushProvider.message));
+      final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+      final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+      requestProvider.jobRequest = jobRequest;
+
+      if (event == "onResume") {
+        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: 0, myRequest: true, title: "test")));
+      }
+
+      if (event == "onMessage") {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          showYesNoDialog(
+            context: context,
+            content: 'Quieres ver la actualizacion ahora?',
+            title: 'Estado de solicitud',
+            onCancel: () {
+              Navigator.of(context, rootNavigator: true).pop();
+            },
+            onConfirm: () {
+              Navigator.of(context, rootNavigator: true).pop();
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => JobRequestPage(
+                    index: 0,
+                    myRequest: requestProvider.jobRequest.username == sessionProvider.userProfile.username,
+                    title: "Mis solicitudes",
+                    returnHome: true,
+                  ),
+                ),
+              );
+            },
+          );
+        });
+      }
+    }
+
     return WillPopScope(
       onWillPop: () async {
         return false;
@@ -169,8 +221,6 @@ class _LoginButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final loginProvider = Provider.of<_LoginProvider>(context);
-    final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
     final size = MediaQuery.of(context).size;
 
     return CommonButton(
@@ -180,12 +230,16 @@ class _LoginButton extends StatelessWidget {
       width: double.infinity,
       materialEffect: false,
       onPressed: () async {
+        final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+        final loginProvider = Provider.of<_LoginProvider>(context, listen: false);
+        final pushNotificationsProvider = Provider.of<PushNotificationsProvider>(context, listen: false);
+
         FocusManager.instance.primaryFocus.unfocus();
         if (!_formKey.currentState.validate()) {
           showErrorSnackbar(context, 'Datos incorrectos');
           return;
         }
-        final Session result = await SessionService().login(loginProvider.username, loginProvider.password);
+        final Session result = await SessionService().login(loginProvider.username, loginProvider.password, pushNotificationsProvider.token);
 
         if (result == null) {
           showErrorSnackbar(context, 'Credenciales invalidas');
