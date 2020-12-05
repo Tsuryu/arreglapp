@@ -112,4 +112,47 @@ class JobRequestService {
       return false;
     }
   }
+
+  Future<bool> confirmPayment(String jwt, String traceID) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt", "trace-id": traceID};
+      final encoding = Encoding.getByName('utf-8');
+
+      final response = await http.post(Constants.BASE_URL_CORE_OPERATION + "/service-request/pay", headers: header, encoding: encoding);
+
+      if (response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<bool> transactionFeePay(String jwt, String traceID, String image) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt", "trace-id": traceID};
+      final encoding = Encoding.getByName('utf-8');
+      final Map<String, dynamic> data = Map<String, dynamic>();
+      data.putIfAbsent("image", () => image);
+
+      final response = await http.post(
+        Constants.BASE_URL_CORE_OPERATION + "/service-request/pay-transaction-fee",
+        body: json.encode(data),
+        headers: header,
+        encoding: encoding,
+      );
+
+      if (response.statusCode == 201) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

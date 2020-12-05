@@ -1,6 +1,8 @@
 import 'package:arreglapp/src/pages/create_request/job_request_type_selection_page.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
+import 'package:arreglapp/src/pages/profile_page.dart';
 import 'package:arreglapp/src/pages/requests/request_type_selection_page.dart';
+import 'package:arreglapp/src/pages/support_page.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/widgets/grid_item.dart';
 import 'package:arreglapp/src/widgets/plain_title_header.dart';
@@ -37,8 +39,6 @@ class HomePage extends StatelessWidget {
 }
 
 class ItemList extends StatelessWidget {
-  const ItemList({Key key}) : super(key: key);
-
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
@@ -79,9 +79,23 @@ class ItemList extends StatelessWidget {
           Flex(
             direction: Axis.horizontal,
             children: [
-              GridItem(title: 'Configurar', iconData: FontAwesomeIcons.cog, delay: 750),
+              GridItem(
+                title: 'Mis datos',
+                iconData: FontAwesomeIcons.cog,
+                delay: 750,
+                onTap: () {
+                  Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProfilePage()));
+                },
+              ),
               Expanded(child: Container()),
-              GridItem(title: 'Soporte', iconData: FontAwesomeIcons.question, delay: 1000),
+              GridItem(
+                title: 'Soporte',
+                iconData: FontAwesomeIcons.question,
+                delay: 1000,
+                onTap: () {
+                  Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => SupportPage()));
+                },
+              ),
             ],
           ),
           SizedBox(height: size.height * 0.02),

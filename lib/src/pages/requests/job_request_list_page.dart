@@ -1,3 +1,4 @@
+import 'package:arreglapp/src/helpers/job_request_util.dart';
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/job_request.dart';
 import 'package:arreglapp/src/pages/external_background.dart';
@@ -16,8 +17,9 @@ class JobRequestListPage extends StatelessWidget {
   final FutureListGenerator searchFunction;
   final String title;
   final bool myRequest;
+  final bool isSearchNewRequests;
 
-  const JobRequestListPage({@required this.searchFunction, @required this.title, @required this.myRequest});
+  const JobRequestListPage({@required this.searchFunction, @required this.title, @required this.myRequest, this.isSearchNewRequests = false});
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class JobRequestListPage extends StatelessWidget {
           header: _Header(title: this.title),
           getChildren: () {
             return <Widget>[
-              JobList(searchFunction: searchFunction, myRequest: myRequest, title: title),
+              JobList(searchFunction: searchFunction, myRequest: myRequest, title: title, isSearchNewRequests: this.isSearchNewRequests),
             ];
           },
         ),
@@ -37,11 +39,12 @@ class JobRequestListPage extends StatelessWidget {
 }
 
 class JobList extends StatefulWidget {
+  final bool isSearchNewRequests;
   final FutureListGenerator searchFunction;
   final bool myRequest;
   final String title;
 
-  const JobList({this.searchFunction, this.myRequest, this.title});
+  const JobList({this.searchFunction, this.myRequest, this.title, this.isSearchNewRequests});
 
   @override
   _JobListState createState() => _JobListState();
@@ -74,7 +77,14 @@ class _JobListState extends State<JobList> {
         if (snapshot.data.length == 0) {
           return Container();
         } else {
-          return _List(jobList: snapshot.data, itemCount: snapshot.data.length, myRequest: widget.myRequest, updateFunction: _runFuture, title: widget.title);
+          return _List(
+            jobList: snapshot.data,
+            itemCount: snapshot.data.length,
+            myRequest: widget.myRequest,
+            updateFunction: _runFuture,
+            title: widget.title,
+            isSearchNewRequests: widget.isSearchNewRequests,
+          );
         }
       },
     );
@@ -82,13 +92,14 @@ class _JobListState extends State<JobList> {
 }
 
 class _List extends StatelessWidget {
+  final bool isSearchNewRequests;
   final List<JobRequest> jobList;
   final int itemCount;
   final bool myRequest;
   final Function updateFunction;
   final String title;
 
-  const _List({this.jobList, this.itemCount, this.myRequest, this.updateFunction, this.title});
+  const _List({this.jobList, this.itemCount, this.myRequest, this.updateFunction, this.title, this.isSearchNewRequests});
 
   @override
   Widget build(BuildContext context) {
@@ -126,7 +137,9 @@ class _List extends StatelessWidget {
             title: RichText(
               text: TextSpan(
                 children: [
-                  TextSpan(text: "(Pendiente) ", style: appTheme.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold)),
+                  TextSpan(
+                      text: "(${JobRequestUtil().getJobRequestStatus(this.myRequest, jobList[index], isSearchNewRequests: this.isSearchNewRequests)}) ",
+                      style: appTheme.textTheme.bodyText2.copyWith(fontWeight: FontWeight.bold)),
                   TextSpan(text: jobList[index].title, style: appTheme.textTheme.bodyText2),
                 ],
               ),
@@ -136,7 +149,16 @@ class _List extends StatelessWidget {
             onTap: () async {
               requestProvider.jobRequest = jobList[index];
               var result = await Navigator.push(
-                  context, CupertinoPageRoute(builder: (BuildContext context) => JobRequestPage(index: index, myRequest: this.myRequest, title: title)));
+                context,
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => JobRequestPage(
+                    index: index,
+                    myRequest: this.myRequest,
+                    title: title,
+                    isSearchNewRequests: this.isSearchNewRequests,
+                  ),
+                ),
+              );
               if (result != null) {
                 showSuccessSnackbar(context, result);
               }

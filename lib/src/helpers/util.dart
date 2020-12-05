@@ -128,6 +128,7 @@ void scrollDownOnKeyboard(ScrollController scrollController, {position = 0.0}) {
   );
 }
 
+// ignore: missing_return
 Function _default() {}
 
 showYesNoDialog({BuildContext context, Function onCancel = _default, Function onConfirm = _default, String title, String content}) {

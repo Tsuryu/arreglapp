@@ -1,23 +1,19 @@
-import 'dart:async';
 import 'dart:io';
+import 'dart:convert';
 
+import 'package:arreglapp/src/models/push_notification.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 
 class PushNotificationsProvider with ChangeNotifier {
   FirebaseMessaging _firebaseMessaging = FirebaseMessaging();
-  String _message;
   String _event;
   String _token;
+  PushNotification _pushNotification;
 
-  String get message => this._message;
   String get event => this._event;
   String get token => this._token;
-
-  set message(String value) {
-    this._message = value;
-    notifyListeners();
-  }
+  PushNotification get pushNotification => this._pushNotification;
 
   set event(String value) {
     this._event = value;
@@ -27,6 +23,11 @@ class PushNotificationsProvider with ChangeNotifier {
     this._token = value;
   }
 
+  set pushNotification(PushNotification value) {
+    this._pushNotification = value;
+    notifyListeners();
+  }
+
   initNotifications() async {
     _firebaseMessaging.requestNotificationPermissions();
 
@@ -34,19 +35,22 @@ class PushNotificationsProvider with ChangeNotifier {
     this.token = token;
 
     _firebaseMessaging.configure(
+      // ignore: missing_return
       onMessage: (info) {
         this.event = 'onMessage';
         if (Platform.isAndroid) {
-          message = info['data']['job_request'] ?? 'no-data';
+          final pushNotification = pushNotificationFromJson(json.encode(info).replaceAll("\"{\\", "{").replaceAll("}\"}", "}}").replaceAll("\\", ""));
+          this.pushNotification = pushNotification;
         }
       },
-      onLaunch: (info) {
-        print('onLaunch: $info');
-      },
+      // ignore: missing_return
+      onLaunch: (info) {},
+      // ignore: missing_return
       onResume: (info) {
         this.event = 'onResume';
         if (Platform.isAndroid) {
-          message = info['data']['job_request'] ?? 'no-data';
+          final pushNotification = pushNotificationFromJson(json.encode(info).replaceAll("\"{\\", "{").replaceAll("}\"}", "}}").replaceAll("\\", ""));
+          this.pushNotification = pushNotification;
         }
       },
     );

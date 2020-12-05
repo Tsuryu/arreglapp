@@ -22,6 +22,8 @@ class JobRequest {
     this.userContactInfo,
     this.chats,
     this.budget,
+    this.payed,
+    this.transactionFeePayed,
   });
 
   String id;
@@ -34,6 +36,8 @@ class JobRequest {
   UserContactInfo userContactInfo;
   List<UserContactInfo> chats;
   Budget budget;
+  bool payed;
+  bool transactionFeePayed;
 
   factory JobRequest.fromJson(Map<String, dynamic> json) => JobRequest(
         id: json["id"],
@@ -46,6 +50,8 @@ class JobRequest {
         userContactInfo: UserContactInfo.fromJson(json["user_contact_info"]),
         chats: json["chats"] != null ? List<UserContactInfo>.from(json["chats"].map((x) => UserContactInfo.fromJson(x))) : null,
         budget: json["budget"] != null ? Budget.fromJson(json["budget"]) : null,
+        payed: json["payed"],
+        transactionFeePayed: json["transaction_fee_payed"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -59,6 +65,8 @@ class JobRequest {
         "user_contact_info": userContactInfo != null ? userContactInfo.toJson() : null,
         "chats": chats != null ? chatsToJson(chats) : null,
         "budget": budget != null ? budget.toJson() : null,
+        "payed": payed,
+        "transaction_fee_payed": transactionFeePayed,
       };
 }
 

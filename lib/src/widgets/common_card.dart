@@ -3,34 +3,44 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class CommonCard extends StatelessWidget {
-  final Widget child;
-  final Function callback;
+  final Icon icon;
+  final String title;
+  final Widget content;
+  final Function onTap;
+  final bool hideTrailing;
+  final bool hidePadding;
 
-  const CommonCard({@required this.child, this.callback});
+  const CommonCard({this.title = "", this.onTap, this.icon, this.hideTrailing = false, this.content, this.hidePadding = false});
 
   @override
   Widget build(BuildContext context) {
-    final size = MediaQuery.of(context).size;
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
+    final size = MediaQuery.of(context).size;
 
     return Container(
-      margin: EdgeInsets.symmetric(vertical: size.height * 0.005),
-      child: Material(
-        child: Ink(
-          decoration: BoxDecoration(
-            color: appTheme.accentColor.withOpacity(0.1),
-            borderRadius: BorderRadius.circular(15.0),
-          ),
-          child: InkWell(
-            onTap: callback,
-            child: Container(
-              alignment: Alignment.center,
-              padding: EdgeInsets.symmetric(horizontal: size.width * 0.02),
-              width: double.infinity,
-              height: size.height * 0.1,
-              child: child,
-            ),
-          ),
+      margin: EdgeInsets.symmetric(horizontal: size.width * 0.03, vertical: size.height * 0.01),
+      decoration: BoxDecoration(
+        color: appTheme.accentColor.withOpacity(0.75),
+        borderRadius: BorderRadius.all(Radius.circular(15)),
+      ),
+      child: ListTile(
+        leading: icon,
+        trailing: hideTrailing
+            ? null
+            : Container(
+                height: double.infinity,
+                child: Icon(
+                  Icons.chevron_right,
+                  size: 40.0,
+                  color: appTheme.primaryColor,
+                ),
+              ),
+        title: this.content ?? Text(this.title, textScaleFactor: 1.3, style: appTheme.textTheme.bodyText2.copyWith()),
+        contentPadding: this.hidePadding ? null : EdgeInsets.symmetric(vertical: size.height * 0.02, horizontal: size.width * 0.03),
+        onTap: this.onTap,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.all(Radius.circular(15)),
+          side: BorderSide(color: appTheme.primaryColor),
         ),
       ),
     );

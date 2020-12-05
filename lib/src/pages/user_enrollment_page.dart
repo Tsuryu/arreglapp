@@ -320,7 +320,6 @@ class _GeneralDataFields extends StatelessWidget {
           initialvalue: userEnrollmentProvider.firstName,
           label: 'Nombre/s',
           validateEmpty: true,
-          noSpaces: true,
           icon: FontAwesomeIcons.addressCard,
           onChange: (String value) {
             userEnrollmentProvider.firstName = value;
@@ -330,7 +329,6 @@ class _GeneralDataFields extends StatelessWidget {
           initialvalue: userEnrollmentProvider.lastName,
           label: 'Apellido/s',
           validateEmpty: true,
-          noSpaces: true,
           icon: FontAwesomeIcons.solidAddressCard,
           onChange: (String value) {
             userEnrollmentProvider.lastName = value;

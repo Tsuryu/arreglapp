@@ -1,8 +1,9 @@
+import 'package:arreglapp/src/helpers/job_request_util.dart';
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/models/job_request.dart';
-import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:arreglapp/src/pages/budget_page.dart';
 import 'package:arreglapp/src/pages/external_background.dart';
+import 'package:arreglapp/src/pages/payment/service_payment_page.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/job_request_service.dart';
@@ -25,8 +26,9 @@ class JobRequestPage extends StatelessWidget {
   final int index;
   final String title;
   final bool returnHome;
+  final bool isSearchNewRequests;
 
-  const JobRequestPage({@required this.index, @required this.myRequest, this.traceID, this.title, this.returnHome = false});
+  const JobRequestPage({@required this.index, @required this.myRequest, this.traceID, this.title, this.returnHome = false, this.isSearchNewRequests = false});
 
   @override
   Widget build(BuildContext context) {
@@ -38,13 +40,100 @@ class JobRequestPage extends StatelessWidget {
           header: _Header(title: this.title),
           getChildren: () {
             return <Widget>[
-              _GeneralInfo(),
+              _GeneralInfo(isSearchNewRequests: this.isSearchNewRequests, myRequest: myRequest),
               _Chats(myRequest: myRequest, traceID: traceID),
-              _BudgetButtom(myRequest: myRequest),
+              _ActionButtons(myRequest: myRequest),
             ];
           },
         ),
       ),
+    );
+  }
+}
+
+class _ActionButtons extends StatelessWidget {
+  final bool myRequest;
+
+  const _ActionButtons({this.myRequest});
+
+  @override
+  Widget build(BuildContext context) {
+    final size = MediaQuery.of(context).size;
+
+    return Padding(
+      padding: EdgeInsets.only(top: size.height * 0.02),
+      child: Flex(
+        direction: Axis.horizontal,
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          !myRequest ? _CommissionPaymentButton(myRequest: myRequest) : _PaymentButton(myRequest: myRequest),
+          _BudgetButton(myRequest: myRequest),
+        ],
+      ),
+    );
+  }
+}
+
+class _CommissionPaymentButton extends StatelessWidget {
+  final bool myRequest;
+
+  const _CommissionPaymentButton({Key key, this.myRequest}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+    final size = MediaQuery.of(context).size;
+
+    return CommonButton(
+      width: size.width * 0.4,
+      disabled: !requestProvider.jobRequest.payed,
+      mainButton: false,
+      withBorder: false,
+      text: "Pagar comision",
+      onPressed: () async {
+        if (requestProvider.jobRequest.transactionFeePayed) {
+          showInfoSnackbar(context, "Su pago de comision esta siendo procesado");
+          return;
+        }
+        await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ServicePaymentPage(myRequest: false)));
+      },
+    );
+  }
+}
+
+class _PaymentButton extends StatelessWidget {
+  final bool myRequest;
+
+  const _PaymentButton({this.myRequest});
+
+  @override
+  Widget build(BuildContext context) {
+    final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+    final size = MediaQuery.of(context).size;
+
+    bool disabled = true;
+    if (requestProvider.jobRequest.budget != null && !requestProvider.jobRequest.payed) {
+      disabled = false;
+    }
+
+    return CommonButton(
+      width: size.width * 0.4,
+      disabled: disabled,
+      mainButton: false,
+      withBorder: false,
+      text: "Pagar",
+      onPressed: () async {
+        // if (requestProvider.jobRequest.budget != null && !myRequest) {
+        //   return showInfoSnackbar(context, "Ya existe un presupuesto");
+        // }
+        // if (myRequest && requestProvider.jobRequest.budget == null) {
+        //   return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
+        // }
+        await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ServicePaymentPage(myRequest: true)));
+        // if (result != null) {
+        //   showSuccessSnackbar(context, result);
+        // }
+      },
     );
   }
 }
@@ -62,6 +151,7 @@ class _Chats extends StatefulWidget {
 class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
   List<UserContactInfo> usersContactInfo = [];
   bool isProfessionalConfirmed = false;
+  bool shouldPop = false;
 
   @override
   void initState() {
@@ -78,14 +168,7 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed) {
-      // user returned to our app
-      Navigator.pop(context);
-    } else if (state == AppLifecycleState.inactive) {
-      // app is inactive
-      print("test");
-    } else if (state == AppLifecycleState.paused) {
-      // user is about quit our app temporally
-      print("test");
+      if (shouldPop) Navigator.pop(context);
     }
   }
 
@@ -190,6 +273,7 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
                           }
                         }
                         requestProvider.isNew = false;
+                        shouldPop = true;
                         FlutterOpenWhatsapp.sendSingleMessage("549" + usersContactInfo[index].phone, "");
                       },
                       icon: Icon(
@@ -209,41 +293,44 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
   }
 }
 
-class _BudgetButtom extends StatelessWidget {
+class _BudgetButton extends StatelessWidget {
   final bool myRequest;
 
-  const _BudgetButtom({@required this.myRequest});
+  const _BudgetButton({@required this.myRequest});
 
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final requestProvider = Provider.of<RequestProvider>(context, listen: false);
 
-    return Container(
-      padding: EdgeInsets.only(top: size.height * 0.02, left: size.width * 0.5, right: size.width * 0.04),
-      child: CommonButton(
-        disabled: !requestProvider.jobRequest.userContactInfo.confirmed && !myRequest,
-        mainButton: false,
-        withBorder: false,
-        text: this.myRequest ? "Ver presupuesto" : "Presupuestar",
-        onPressed: () async {
-          if (requestProvider.jobRequest.budget != null && !myRequest) {
-            return showInfoSnackbar(context, "Ya existe un presupuesto");
-          }
-          if (myRequest && requestProvider.jobRequest.budget == null) {
-            return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
-          }
-          final result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
-          if (result != null) {
-            showSuccessSnackbar(context, result);
-          }
-        },
-      ),
+    return CommonButton(
+      width: size.width * 0.4,
+      disabled: !requestProvider.jobRequest.userContactInfo.confirmed && !myRequest,
+      mainButton: false,
+      withBorder: false,
+      text: this.myRequest ? "Ver presupuesto" : "Presupuestar",
+      onPressed: () async {
+        if (requestProvider.jobRequest.budget != null && !myRequest) {
+          return showInfoSnackbar(context, "Ya existe un presupuesto");
+        }
+        if (myRequest && requestProvider.jobRequest.budget == null) {
+          return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
+        }
+        final result = await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => BudgetPage(myRequest: this.myRequest)));
+        if (result != null) {
+          showSuccessSnackbar(context, result);
+        }
+      },
     );
   }
 }
 
 class _GeneralInfo extends StatelessWidget {
+  final bool isSearchNewRequests;
+  final bool myRequest;
+
+  const _GeneralInfo({this.isSearchNewRequests, this.myRequest});
+
   @override
   Widget build(BuildContext context) {
     final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
@@ -275,7 +362,9 @@ class _GeneralInfo extends StatelessWidget {
               direction: Axis.vertical,
               children: [
                 TextLabel(label: "Titulo", text: requestProvider.jobRequest.title),
-                TextLabel(label: "Estado", text: "Pendiente"),
+                TextLabel(
+                    label: "Estado",
+                    text: JobRequestUtil().getJobRequestStatus(this.myRequest, requestProvider.jobRequest, isSearchNewRequests: this.isSearchNewRequests)),
                 TextLabel(label: "Descripcion", text: requestProvider.jobRequest.description),
               ],
             ),

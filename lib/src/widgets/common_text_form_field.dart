@@ -17,8 +17,11 @@ class CommonTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
   final TextEditingController controller;
   final bool readOnly;
+  final int maxLines;
+  final bool autoFocus;
 
   const CommonTextFormField({
+    this.maxLines = 1,
     this.validateEmpty = false,
     this.onChange,
     this.label = '',
@@ -31,6 +34,7 @@ class CommonTextFormField extends StatelessWidget {
     this.keyboardType = TextInputType.multiline,
     this.controller,
     this.readOnly = false,
+    this.autoFocus = false,
   });
 
   @override
@@ -43,6 +47,8 @@ class CommonTextFormField extends StatelessWidget {
       child: Focus(
         onFocusChange: this.onFocusChange,
         child: TextFormField(
+          autofocus: this.autoFocus,
+          maxLines: this.maxLines,
           showCursor: this.readOnly,
           readOnly: this.readOnly,
           controller: this.controller,
@@ -77,6 +83,7 @@ class CommonTextFormField extends StatelessWidget {
                     size: size.height * 0.04,
                     color: appTheme.primaryColor,
                   ),
+            hintStyle: appTheme.textTheme.bodyText2,
           ),
           validator: this.validateEmpty ? Util.formValidateEmpty : null,
           onChanged: this.onChange != null ? this.onChange : () {},

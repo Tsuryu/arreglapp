@@ -4,7 +4,7 @@ import 'package:arreglapp/src/pages/requests/job_request_list_page.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
 import 'package:arreglapp/src/services/job_request_service.dart';
-import 'package:arreglapp/src/theme/theme.dart';
+import 'package:arreglapp/src/widgets/common_card.dart';
 import 'package:arreglapp/src/widgets/plain_title_header.dart';
 import 'package:arreglapp/src/widgets/slider_page_wrapper.dart';
 import 'package:flutter/cupertino.dart';
@@ -39,7 +39,7 @@ class _Items extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         direction: Axis.vertical,
         children: [
-          _JobCard(
+          CommonCard(
             title: "Buscar solicitudes",
             onTap: () async {
               final requestProvider = Provider.of<RequestProvider>(context, listen: false);
@@ -49,6 +49,7 @@ class _Items extends StatelessWidget {
                 context,
                 CupertinoPageRoute(
                   builder: (BuildContext context) => JobRequestListPage(
+                    isSearchNewRequests: true,
                     myRequest: false,
                     title: "Buscar solicitudes",
                     searchFunction: () async {
@@ -60,7 +61,7 @@ class _Items extends StatelessWidget {
               requestProvider.isNew = false;
             },
           ),
-          _JobCard(
+          CommonCard(
             title: "Solicitudes en curso",
             onTap: () {
               final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
@@ -78,51 +79,13 @@ class _Items extends StatelessWidget {
               // Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => MyOngoingJobRequestListPage()));
             },
           ),
-          _JobCard(
+          CommonCard(
             title: "Historial de solicitudes",
             onTap: () {
               showInfoSnackbar(context, "En construccion");
             },
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _JobCard extends StatelessWidget {
-  final String title;
-  final Function onTap;
-
-  const _JobCard({this.title, this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final appTheme = Provider.of<ThemeChanger>(context).currentTheme;
-    final size = MediaQuery.of(context).size;
-
-    return Container(
-      margin: EdgeInsets.symmetric(horizontal: size.width * 0.03, vertical: size.height * 0.01),
-      decoration: BoxDecoration(
-        color: appTheme.accentColor.withOpacity(0.75),
-        borderRadius: BorderRadius.all(Radius.circular(15)),
-      ),
-      child: ListTile(
-        trailing: Container(
-          height: double.infinity,
-          child: Icon(
-            Icons.chevron_right,
-            size: 40.0,
-            color: appTheme.primaryColor,
-          ),
-        ),
-        title: Text(this.title, textScaleFactor: 1.3, style: appTheme.textTheme.bodyText2.copyWith()),
-        contentPadding: EdgeInsets.symmetric(vertical: size.height * 0.02, horizontal: size.width * 0.03),
-        onTap: this.onTap,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.all(Radius.circular(15)),
-          side: BorderSide(color: appTheme.primaryColor),
-        ),
       ),
     );
   }

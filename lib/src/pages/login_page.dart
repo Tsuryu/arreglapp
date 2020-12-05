@@ -1,7 +1,4 @@
-import 'dart:convert';
-
 import 'package:arreglapp/src/helpers/util.dart';
-import 'package:arreglapp/src/models/job_request.dart';
 import 'package:arreglapp/src/models/session.dart';
 import 'package:arreglapp/src/models/user_profile.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
@@ -35,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
     if (pushProvider.event != null) {
       final event = pushProvider.event;
       pushProvider.event = null;
-      final jobRequest = JobRequest.fromJson(jsonDecode(pushProvider.message));
+      final jobRequest = pushProvider.pushNotification.data.jobRequest;
       final requestProvider = Provider.of<RequestProvider>(context, listen: false);
       final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
       requestProvider.jobRequest = jobRequest;
@@ -48,8 +45,8 @@ class _LoginPageState extends State<LoginPage> {
         WidgetsBinding.instance.addPostFrameCallback((_) {
           showYesNoDialog(
             context: context,
-            content: 'Quieres ver la actualizacion ahora?',
-            title: 'Estado de solicitud',
+            content: pushProvider.pushNotification.notification.body,
+            title: pushProvider.pushNotification.notification.title,
             onCancel: () {
               Navigator.of(context, rootNavigator: true).pop();
             },

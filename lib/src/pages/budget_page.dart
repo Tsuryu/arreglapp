@@ -28,16 +28,34 @@ class BudgetPage extends StatelessWidget {
           header: _Header(),
           getChildren: () {
             return <Widget>[
-              BasicCard(
-                title: "Datos",
-                child: ChangeNotifierProvider(
-                  create: (_) => _BudgetProvider(),
-                  child: _Form(myRequest: myRequest),
-                ),
-              ),
+              BudgetForm(myRequest: this.myRequest),
+              // BasicCard(
+              //   title: "Datos",
+              //   child: ChangeNotifierProvider(
+              //     create: (_) => _BudgetProvider(),
+              //     child: _Form(myRequest: myRequest),
+              //   ),
+              // ),
             ];
           },
         ),
+      ),
+    );
+  }
+}
+
+class BudgetForm extends StatelessWidget {
+  final bool myRequest;
+
+  const BudgetForm({this.myRequest});
+
+  @override
+  Widget build(BuildContext context) {
+    return BasicCard(
+      title: "Datos",
+      child: ChangeNotifierProvider(
+        create: (_) => _BudgetProvider(),
+        child: _Form(myRequest: myRequest),
       ),
     );
   }

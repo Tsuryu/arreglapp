@@ -92,4 +92,48 @@ class UserProfileService {
       return false;
     }
   }
+
+  Future<UserProfile> findMyProfile(String jwt) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+      final response = await http.get(Constants.BASE_URL_MY_PROFILE, headers: header);
+
+      if (response.statusCode == 200) {
+        final decodedData = json.decode(response.body);
+        return UserProfile.fromJson(decodedData);
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
+
+  Future<bool> update(UserProfile userProfile, String jwt) async {
+    try {
+      final Map<String, dynamic> data = Map<String, String>();
+      data.putIfAbsent("first_name", () => userProfile.firstName);
+      data.putIfAbsent("last_name", () => userProfile.lastName);
+      data.putIfAbsent("phone", () => userProfile.phone);
+      data.putIfAbsent("email", () => userProfile.email);
+      data.putIfAbsent("address", () => userProfile.address);
+      var header = {
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": "Bearer $jwt",
+      };
+      final encoding = Encoding.getByName('utf-8');
+      final response = await http.put("${Constants.BASE_URL_USER_PROFILE}", body: json.encode(data), headers: header, encoding: encoding);
+
+      if (response.statusCode != 200) {
+        return false;
+      }
+
+      return true;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
 }

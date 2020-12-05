@@ -37,7 +37,8 @@ class _SliderPageWrapperBuilder extends StatelessWidget {
             child: Container(padding: EdgeInsets.only(bottom: size.height * 0.01), child: this.header),
           ),
         ),
-        SliverList(delegate: SliverChildListDelegate(this.getChildren == null ? [] : this.getChildren()))
+        // sliverList,
+        SliverList(delegate: SliverChildListDelegate(this.getChildren == null ? List<Widget>() : this.getChildren()))
       ],
     );
   }
@@ -72,9 +73,7 @@ class _SliderPageWrapperFutureBuilder extends StatelessWidget {
               ),
             ),
             SliverList(
-              delegate: SliverChildListDelegate(!snapshot.hasData
-                  ? [SizedBox(height: size.height * 0.1), Loading()]
-                  : this.getChildren(snapshot.data)),
+              delegate: SliverChildListDelegate(!snapshot.hasData ? [SizedBox(height: size.height * 0.1), Loading()] : this.getChildren(snapshot.data)),
             )
           ],
         );

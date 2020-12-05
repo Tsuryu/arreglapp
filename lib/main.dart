@@ -1,8 +1,4 @@
-import 'dart:convert';
-
-import 'package:arreglapp/src/models/job_request.dart';
 import 'package:arreglapp/src/pages/login_page.dart';
-import 'package:arreglapp/src/pages/requests/job_request_page.dart';
 import 'package:arreglapp/src/providers/otp_provider.dart';
 import 'package:arreglapp/src/providers/push_notifications_provider.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
