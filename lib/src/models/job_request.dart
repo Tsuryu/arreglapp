@@ -24,6 +24,7 @@ class JobRequest {
     this.budget,
     this.payed,
     this.transactionFeePayed,
+    this.canceled,
   });
 
   String id;
@@ -38,6 +39,7 @@ class JobRequest {
   Budget budget;
   bool payed;
   bool transactionFeePayed;
+  bool canceled;
 
   factory JobRequest.fromJson(Map<String, dynamic> json) => JobRequest(
         id: json["id"],
@@ -52,6 +54,7 @@ class JobRequest {
         budget: json["budget"] != null ? Budget.fromJson(json["budget"]) : null,
         payed: json["payed"],
         transactionFeePayed: json["transaction_fee_payed"],
+        canceled: json["canceled"],
       );
 
   Map<String, dynamic> toJson() => {
@@ -67,6 +70,7 @@ class JobRequest {
         "budget": budget != null ? budget.toJson() : null,
         "payed": payed,
         "transaction_fee_payed": transactionFeePayed,
+        "canceled": canceled,
       };
 }
 

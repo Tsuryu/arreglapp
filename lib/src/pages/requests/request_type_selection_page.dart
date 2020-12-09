@@ -16,46 +16,91 @@ class RequestTypeSelectionPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
+    // return Scaffold(
+    //   body: ExternalBackground(
+    //     child: SliderPageWrapper(
+    //       header: _Header(),
+    //       getChildren: () {
+    //         return <Widget>[
+    //           Expanded(
+    //             child: Container(
+    //               height: size.height * 0.7,
+    //               child: Flex(
+    //                 mainAxisAlignment: MainAxisAlignment.spaceAround,
+    //                 direction: Axis.horizontal,
+    //                 children: [
+    //                   GridItem(
+    //                     iconData: FontAwesomeIcons.user,
+    //                     title: "Cliente",
+    //                     onTap: () {
+    //                       final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+    //                       Navigator.push(
+    //                         context,
+    //                         CupertinoPageRoute(
+    //                           builder: (BuildContext context) => JobRequestListPage(
+    //                               myRequest: true,
+    //                               title: "Mis Solicitudes",
+    //                               searchFunction: () async {
+    //                                 return await JobRequestService().listBy(sessionProvider.userProfile.username, sessionProvider.session.jwt);
+    //                               }),
+    //                         ),
+    //                       );
+    //                     },
+    //                   ),
+    //                   GridItem(
+    //                     iconData: FontAwesomeIcons.userAlt,
+    //                     title: "Profesional",
+    //                     onTap: () {
+    //                       Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProfesionalJobRequestTypeSelectionPage()));
+    //                     },
+    //                   ),
+    //                 ],
+    //               ),
+    //             ),
+    //           ),
+    //         ];
+    //       },
+    //     ),
+    //   ),
+    // );
     return Scaffold(
       body: ExternalBackground(
         child: SliderPageWrapper(
           header: _Header(),
           getChildren: () {
             return <Widget>[
-              Expanded(
-                child: Container(
-                  height: size.height * 0.7,
-                  child: Flex(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    direction: Axis.horizontal,
-                    children: [
-                      GridItem(
-                        iconData: FontAwesomeIcons.user,
-                        title: "Cliente",
-                        onTap: () {
-                          final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
-                          Navigator.push(
-                            context,
-                            CupertinoPageRoute(
-                              builder: (BuildContext context) => JobRequestListPage(
-                                  myRequest: true,
-                                  title: "Mis Solicitudes",
-                                  searchFunction: () async {
-                                    return await JobRequestService().listBy(sessionProvider.userProfile.username, sessionProvider.session.jwt);
-                                  }),
-                            ),
-                          );
-                        },
-                      ),
-                      GridItem(
-                        iconData: FontAwesomeIcons.userAlt,
-                        title: "Profesional",
-                        onTap: () {
-                          Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProfesionalJobRequestTypeSelectionPage()));
-                        },
-                      ),
-                    ],
-                  ),
+              Container(
+                height: size.height * 0.7,
+                child: Flex(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  direction: Axis.horizontal,
+                  children: [
+                    GridItem(
+                      iconData: FontAwesomeIcons.user,
+                      title: "Cliente",
+                      onTap: () {
+                        final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+                        Navigator.push(
+                          context,
+                          CupertinoPageRoute(
+                            builder: (BuildContext context) => JobRequestListPage(
+                                myRequest: true,
+                                title: "Mis Solicitudes",
+                                searchFunction: () async {
+                                  return await JobRequestService().listBy(sessionProvider.userProfile.username, sessionProvider.session.jwt);
+                                }),
+                          ),
+                        );
+                      },
+                    ),
+                    GridItem(
+                      iconData: FontAwesomeIcons.userAlt,
+                      title: "Profesional",
+                      onTap: () {
+                        Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ProfesionalJobRequestTypeSelectionPage()));
+                      },
+                    ),
+                  ],
                 ),
               ),
             ];

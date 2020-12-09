@@ -10,6 +10,8 @@ class JobRequestUtil {
       return "Pagado";
     } else if (jobRequest.budget != null) {
       return "Pago pendiente";
+    } else if (jobRequest.canceled != null && jobRequest.canceled) {
+      return "Cancelada";
     } else if (jobRequest.userContactInfo.confirmed) {
       return "Esperando presupuesto";
     }
@@ -22,6 +24,8 @@ class JobRequestUtil {
       return "En revision de pago";
     } else if (jobRequest.payed) {
       return "Comision pendiente";
+    } else if (jobRequest.canceled != null && jobRequest.canceled) {
+      return "Cancelada";
     } else if (jobRequest.budget != null) {
       return "Esperando pago";
     } else if (jobRequest.userContactInfo.confirmed) {

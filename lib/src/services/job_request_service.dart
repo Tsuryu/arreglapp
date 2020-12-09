@@ -155,4 +155,37 @@ class JobRequestService {
       return false;
     }
   }
+
+  Future<bool> cancel(String jwt, String traceID) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+
+      final response = await http.delete(Constants.BASE_URL_CORE_OPERATION + "/service-request/" + traceID, headers: header);
+
+      if (response.statusCode == 200) {
+        return true;
+      }
+
+      return false;
+    } catch (e) {
+      print(e);
+      return false;
+    }
+  }
+
+  Future<List<JobRequest>> getHistory(String jwt) async {
+    try {
+      var header = {'Content-Type': 'application/json', "Accept": "application/json", "Authorization": "Bearer $jwt"};
+      final response = await http.get(Constants.BASE_URL_CORE_OPERATION + "/service-request/professional/history", headers: header);
+
+      if (response.statusCode == 200) {
+        return jobRequestFromJson(response.body);
+      }
+
+      return null;
+    } catch (e) {
+      print(e);
+      return null;
+    }
+  }
 }

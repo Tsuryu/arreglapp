@@ -91,6 +91,10 @@ class _CommissionPaymentButton extends StatelessWidget {
       withBorder: false,
       text: "Pagar comision",
       onPressed: () async {
+        if (requestProvider.jobRequest.canceled != null && requestProvider.jobRequest.canceled) {
+          showInfoSnackbar(context, "El pedido esta cancelado");
+          return;
+        }
         if (requestProvider.jobRequest.transactionFeePayed) {
           showInfoSnackbar(context, "Su pago de comision esta siendo procesado");
           return;
@@ -129,6 +133,10 @@ class _PaymentButton extends StatelessWidget {
         // if (myRequest && requestProvider.jobRequest.budget == null) {
         //   return showInfoSnackbar(context, "Aun no se cargo un presupuesto");
         // }
+        if (requestProvider.jobRequest.canceled != null && requestProvider.jobRequest.canceled) {
+          showInfoSnackbar(context, "El pedido esta cancelado");
+          return;
+        }
         await Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => ServicePaymentPage(myRequest: true)));
         // if (result != null) {
         //   showSuccessSnackbar(context, result);
@@ -220,7 +228,33 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
                         ? IconButton(
                             padding: EdgeInsets.all(0),
                             alignment: Alignment.center,
-                            onPressed: () {},
+                            onPressed: () async {
+                              final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+                              final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+
+                              if (requestProvider.jobRequest.payed != null && requestProvider.jobRequest.payed) {
+                                showInfoSnackbar(context, "El pedido ya esta pagado");
+                                return;
+                              }
+
+                              if (requestProvider.jobRequest.transactionFeePayed != null && requestProvider.jobRequest.transactionFeePayed) {
+                                showInfoSnackbar(context, "El pedido ya esta en revision de pago de comision");
+                                return;
+                              }
+
+                              if (requestProvider.jobRequest.canceled != null && requestProvider.jobRequest.canceled) {
+                                showInfoSnackbar(context, "El pedido esta cancelado");
+                                return;
+                              }
+
+                              final result = await JobRequestService().cancel(sessionProvider.session.jwt, requestProvider.jobRequest.id);
+                              if (!result) {
+                                showErrorSnackbar(context, "No se pudo cancelar el pedido");
+                                return;
+                              }
+
+                              Navigator.pop(context, "Se cancelo el pedido satisfactoriamente");
+                            },
                             icon: Icon(
                               Icons.cancel_outlined,
                               size: 40.0,
@@ -259,6 +293,10 @@ class __ChatsState extends State<_Chats> with WidgetsBindingObserver {
                       padding: EdgeInsets.all(0),
                       onPressed: () async {
                         final requestProvider = Provider.of<RequestProvider>(context, listen: false);
+                        if (requestProvider.jobRequest.canceled != null && requestProvider.jobRequest.canceled) {
+                          showInfoSnackbar(context, "El pedido esta cancelado");
+                          return;
+                        }
                         if (!widget.myRequest && requestProvider.isNew) {
                           final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
                           final result = await JobRequestService().initChat(
@@ -310,6 +348,10 @@ class _BudgetButton extends StatelessWidget {
       withBorder: false,
       text: this.myRequest ? "Ver presupuesto" : "Presupuestar",
       onPressed: () async {
+        if (requestProvider.jobRequest.canceled != null && requestProvider.jobRequest.canceled) {
+          showInfoSnackbar(context, "El pedido esta cancelado");
+          return;
+        }
         if (requestProvider.jobRequest.budget != null && !myRequest) {
           return showInfoSnackbar(context, "Ya existe un presupuesto");
         }

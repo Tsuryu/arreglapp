@@ -1,4 +1,3 @@
-import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/pages/external_background.dart';
 import 'package:arreglapp/src/pages/requests/job_request_list_page.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
@@ -69,11 +68,12 @@ class _Items extends StatelessWidget {
                 context,
                 CupertinoPageRoute(
                   builder: (BuildContext context) => JobRequestListPage(
-                      myRequest: false,
-                      title: "Solicitudes en curso",
-                      searchFunction: () async {
-                        return await JobRequestService().searchOngoing(sessionProvider.session.jwt);
-                      }),
+                    myRequest: false,
+                    title: "Solicitudes en curso",
+                    searchFunction: () async {
+                      return await JobRequestService().searchOngoing(sessionProvider.session.jwt);
+                    },
+                  ),
                 ),
               );
               // Navigator.push(context, CupertinoPageRoute(builder: (BuildContext context) => MyOngoingJobRequestListPage()));
@@ -81,8 +81,20 @@ class _Items extends StatelessWidget {
           ),
           CommonCard(
             title: "Historial de solicitudes",
-            onTap: () {
-              showInfoSnackbar(context, "En construccion");
+            onTap: () async {
+              final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
+              Navigator.push(
+                context,
+                CupertinoPageRoute(
+                  builder: (BuildContext context) => JobRequestListPage(
+                    myRequest: false,
+                    title: "Historial de solicitudes",
+                    searchFunction: () async {
+                      return await JobRequestService().getHistory(sessionProvider.session.jwt);
+                    },
+                  ),
+                ),
+              );
             },
           ),
         ],

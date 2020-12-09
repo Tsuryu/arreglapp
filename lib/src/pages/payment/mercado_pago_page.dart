@@ -4,7 +4,6 @@ import 'dart:io';
 import 'package:arreglapp/src/helpers/util.dart';
 import 'package:arreglapp/src/pages/external_background.dart';
 import 'package:arreglapp/src/pages/home_page.dart';
-import 'package:arreglapp/src/pages/login_page.dart';
 import 'package:arreglapp/src/pages/success_page.dart';
 import 'package:arreglapp/src/providers/request_provider.dart';
 import 'package:arreglapp/src/providers/session_provider_provider.dart';
