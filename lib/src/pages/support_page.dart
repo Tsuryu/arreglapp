@@ -78,6 +78,7 @@ class __SupportRequestFormState extends State<_SupportRequestForm> {
               withBorder: false,
               text: 'Enviar',
               onPressed: () async {
+                FocusManager.instance.primaryFocus.unfocus();
                 final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
                 final result = await SupportRequestService().create(this._detail, sessionProvider.session.jwt);
                 if (result) {

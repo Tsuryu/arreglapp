@@ -55,7 +55,7 @@ class ItemList extends StatelessWidget {
             direction: Axis.horizontal,
             children: [
               GridItem(
-                title: 'Buscar expertos',
+                title: 'Cargar solicitud',
                 iconData: FontAwesomeIcons.searchLocation,
                 onTap: () {
                   FocusManager.instance.primaryFocus.unfocus();

@@ -137,6 +137,7 @@ class __ProfileFormState extends State<_ProfileForm> {
           CommonButton(
             text: 'Guardar',
             onPressed: () async {
+              FocusManager.instance.primaryFocus.unfocus();
               final sessionProvider = Provider.of<SessionProvider>(context, listen: false);
               final result = await UserProfileService().update(profileProvider.userProfile, sessionProvider.session.jwt);
               if (result) {
